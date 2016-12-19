@@ -1,4 +1,5 @@
 [![view on npm](https://img.shields.io/npm/v/worker-nodes.svg)](https://www.npmjs.org/package/worker-nodes)
+[![Build Status](https://travis-ci.org/allegro/node-worker-nodes.svg?branch=master)](https://travis-ci.org/allegro/node-worker-nodes)
 
 # worker-nodes
 
