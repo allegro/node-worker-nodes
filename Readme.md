@@ -1,5 +1,6 @@
 [![view on npm](https://img.shields.io/npm/v/worker-nodes.svg)](https://www.npmjs.org/package/worker-nodes)
 [![Build Status](https://travis-ci.org/allegro/node-worker-nodes.svg?branch=master)](https://travis-ci.org/allegro/node-worker-nodes)
+[![dependencies Status](https://david-dm.org/allegro/node-worker-nodes/status.svg)](https://david-dm.org/allegro/node-worker-nodes)
 
 # worker-nodes
 
@@ -16,7 +17,7 @@ $ npm install worker-nodes
 
 # API Reference
 
-    <a name="WorkerNodes"></a>
+<a name="WorkerNodes"></a>
 
 ## WorkerNodes
 **Kind**: global class  
@@ -59,7 +60,7 @@ Starts the process of terminating this instance.
 **Kind**: instance method of <code>[WorkerNodes](#WorkerNodes)</code>  
 **Returns**: <code>Promise</code> - - resolved when the instance is terminated.  
 
-    <a name="WorkerNodesOptions"></a>
+<a name="WorkerNodesOptions"></a>
 
 ## WorkerNodesOptions
 Describes a WorkerNodes options.
