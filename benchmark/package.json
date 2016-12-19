@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "node-worker-pool": "^3.0.2",
+    "process-pool": "^0.3.4",
+    "worker-farm": "^1.3.1",
+    "worker-nodes": "^1.1.0",
+    "workerpool": "^2.1.0"
+  },
+  "devDependencies": {
+    "bluebird": "^3.4.6",
+    "easy-table": "^1.0.0",
+    "minimist": "^1.2.0",
+    "text-table": "^0.2.0"
+  },
+  "scripts": {
+    "pretest": "mkdir -p fixtures; cd fixtures; base64 /dev/urandom | head -c 1048576 > output.dat; base64 /dev/urandom | head -c 524288 > input.dat;",
+    "test": "node reporter.js --repeats 100 ./html-renderer/*"
+  }
+}
