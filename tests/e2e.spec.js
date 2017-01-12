@@ -179,6 +179,25 @@ describe('worker nodes', function () {
         unique(results).should.have.lengthOf(10);
     });
 
+    it('should start workers with an offset', function* () {
+        // given
+        workerNodes = new WorkerNodes(fixture('async-tasks'), {
+            autoStart: true,
+            maxWorkers: 4,
+            minWorkers: 4,
+            workerEndurance: 40,
+            shiftWorkers: true
+        });
+        yield workerNodes.ready();
+
+        // when
+        const offsets = workerNodes.workersQueue.storage.map(storage => storage.tasksStarted);
+
+        // then
+        unique(offsets).should.have.lengthOf(4);
+        offsets.should.deep.equal([ 0, 10, 20, 30 ]);
+    });
+
     describe('auto-start', function () {
 
         it('should be disabled by default', function* () {
