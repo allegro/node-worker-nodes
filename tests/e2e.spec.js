@@ -169,7 +169,8 @@ describe('worker nodes', function () {
 
     it('should distribute the work evenly among available workers', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('process-info'), { maxWorkers: 10 });
+        workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, maxWorkers: 10, minWorkers: 10 });
+        yield workerNodes.ready();
 
         // when
         const results = yield (10).times.call(workerNodes.call.getPid).and.waitForAllResults();
@@ -260,9 +261,11 @@ describe('worker nodes', function () {
         it('should not affect work assignment to the workers by default', function* () {
             // given
             workerNodes = new WorkerNodes(fixture('process-info'), {
-                minWorkers: 1,
+                autoStart: true,
+                minWorkers: 3,
                 maxWorkers: 3
             });
+            yield workerNodes.ready();
 
             // when
             const results1 = yield workerNodes.call.getPid();
@@ -384,6 +387,8 @@ describe('worker nodes', function () {
         it('should result with rejection of all the calls that the worker was processing at the moment', function* () {
             // given
             workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
+                autoStart: true,
+                minWorkers: 1,
                 maxWorkers: 1,
                 maxTasksPerWorker: 2,
                 taskTimeout: 250,
@@ -495,10 +500,13 @@ describe('worker nodes', function () {
     it('should reject calls that exceeds given limit', function* () {
         // given
         workerNodes = new WorkerNodes(fixture('async-tasks'), {
+            autoStart: true,
+            minWorkers: 2,
             maxWorkers: 2,
             maxTasksPerWorker: 5,
             maxTasks: 5
         });
+        yield workerNodes.ready();
 
         // when
         const results = yield (10).times.call(workerNodes.call.task100ms).and.waitForAllResults();
