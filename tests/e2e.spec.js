@@ -220,6 +220,37 @@ describe('worker nodes', function () {
             results.forEach(result => result.should.be.at.most(callStartTime));
         });
 
+        it('should only use workers that are fully initialized', function* () {
+            // given
+            workerNodes = new WorkerNodes(fixture('slow-module'), { autoStart: true, minWorkers: 2, maxWorkers: 2 });
+            yield workerNodes.ready();
+
+            // when
+            const firstWorkerPid = yield workerNodes.call.getPid();
+            const secondWorkerPid = yield workerNodes.call.getPid();
+
+            // kill the first worker
+            yield workerNodes.call.exit().catch(error => error);
+
+            // the second worker should receive everything until the new one comes up
+            const pid1 = yield workerNodes.call.getPid();
+            yield workerNodes.call.task100ms();
+            const pid2 = yield workerNodes.call.getPid();
+            yield workerNodes.call.task100ms();
+            const pid3 = yield workerNodes.call.getPid();
+
+            // wait for the slow worker to come up
+            yield workerNodes.call.task200ms();
+            const pid4 = yield workerNodes.call.getPid();
+
+            // then
+            pid1.should.be.eql(secondWorkerPid);
+            pid2.should.be.eql(secondWorkerPid);
+            pid3.should.be.eql(secondWorkerPid);
+
+            pid4.should.not.be.eql(firstWorkerPid);
+            pid4.should.not.be.eql(secondWorkerPid);
+        });
     });
 
     describe('lazy start', function () {
