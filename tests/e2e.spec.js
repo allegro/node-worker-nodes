@@ -222,34 +222,41 @@ describe('worker nodes', function () {
 
         it('should only use workers that are fully initialized', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('slow-module'), { autoStart: true, minWorkers: 2, maxWorkers: 2 });
-            yield workerNodes.ready();
+            workerNodes = yield new WorkerNodes(fixture('slow-module'), {
+                autoStart: true,
+                minWorkers: 2,
+                maxWorkers: 2,
+                taskMaxRetries: Infinity
+            }).ready();
 
-            // when
             const firstWorkerPid = yield workerNodes.call.getPid();
             const secondWorkerPid = yield workerNodes.call.getPid();
 
-            // kill the first worker
-            yield workerNodes.call.exit().catch(error => error);
-
-            // the second worker should receive everything until the new one comes up
-            const pid1 = yield workerNodes.call.getPid();
-            yield workerNodes.call.task100ms();
-            const pid2 = yield workerNodes.call.getPid();
-            yield workerNodes.call.task100ms();
-            const pid3 = yield workerNodes.call.getPid();
-
-            // wait for the slow worker to come up
-            yield workerNodes.call.task200ms();
-            const pid4 = yield workerNodes.call.getPid();
+            // when
+            process.kill(firstWorkerPid, 'SIGKILL');
+            const results = yield (4).times.call(workerNodes.call.getPid).and.waitForAllResults();
 
             // then
-            pid1.should.be.eql(secondWorkerPid);
-            pid2.should.be.eql(secondWorkerPid);
-            pid3.should.be.eql(secondWorkerPid);
+            unique(results).should.have.lengthOf(1);
+            results.forEach(pid => pid.should.eql(secondWorkerPid));
+        });
 
-            pid4.should.not.be.eql(firstWorkerPid);
-            pid4.should.not.be.eql(secondWorkerPid);
+        it('should respawn accidentally terminated worker', function* () {
+            // given
+            workerNodes = yield new WorkerNodes(fixture('process-info'), {
+                autoStart: true,
+                minWorkers: 2,
+                maxWorkers: 2,
+                taskMaxRetries: Infinity
+            }).ready();
+            const pid = yield workerNodes.call.getPid();
+
+            // when
+            const workersCount = new Promise(resolve => workerNodes.once('workers-ready', resolve));
+            process.kill(pid, 'SIGKILL');
+
+            // then
+            (yield workersCount).should.eql(2);
         });
     });
 
@@ -291,12 +298,11 @@ describe('worker nodes', function () {
 
         it('should not affect work assignment to the workers by default', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), {
+            workerNodes = yield new WorkerNodes(fixture('process-info'), {
                 autoStart: true,
                 minWorkers: 3,
                 maxWorkers: 3
-            });
-            yield workerNodes.ready();
+            }).ready();
 
             // when
             const results1 = yield workerNodes.call.getPid();
@@ -530,14 +536,13 @@ describe('worker nodes', function () {
 
     it('should reject calls that exceeds given limit', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('async-tasks'), {
+        workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
             autoStart: true,
             minWorkers: 2,
             maxWorkers: 2,
             maxTasksPerWorker: 5,
             maxTasks: 5
-        });
-        yield workerNodes.ready();
+        }).ready();
 
         // when
         const results = yield (10).times.call(workerNodes.call.task100ms).and.waitForAllResults();
