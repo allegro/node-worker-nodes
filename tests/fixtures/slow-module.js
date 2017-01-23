@@ -9,6 +9,5 @@ while (end > process.uptime()) {}
 module.exports = {
     getPid: () => process.pid,
     task100ms: () => wait(100).then(returnTrue),
-    task200ms: () => wait(200).then(returnTrue),
     exit: () => process.exit(-1)
 };

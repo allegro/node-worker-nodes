@@ -36,7 +36,8 @@
     "jsdoc-to-markdown": "^2.0.1",
     "lodash.uniq": "^4.5.0",
     "mocha": "^3.1.2",
-    "sinon": "^1.17.6"
+    "sinon": "^1.17.6",
+    "test-until": "^1.0.2"
   },
   "dependencies": {
     "bson": "^1.0.1"

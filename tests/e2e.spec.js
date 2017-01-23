@@ -1,5 +1,6 @@
 const WorkerNodes = require('../');
 const errors = require('../lib/errors');
+const until = require('test-until');
 
 const { fixture, wait, unique, isRunning } = require('./utils');
 
@@ -222,7 +223,8 @@ describe('worker nodes', function () {
 
         it('should only use workers that are fully initialized', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('slow-module'), { autoStart: true, minWorkers: 2, maxWorkers: 2 });
+            const minWorkers = 2;
+            workerNodes = new WorkerNodes(fixture('slow-module'), { autoStart: true, minWorkers, maxWorkers: 2 });
             yield workerNodes.ready();
 
             // when
@@ -240,16 +242,21 @@ describe('worker nodes', function () {
             const pid3 = yield workerNodes.call.getPid();
 
             // wait for the slow worker to come up
-            yield workerNodes.call.task200ms();
+            yield until(() => {
+                return workerNodes.workersQueue.storage
+                    .map(worker => worker.isProcessAlive)
+                    .filter(value => value)
+                    .length == minWorkers
+            });
             const pid4 = yield workerNodes.call.getPid();
 
             // then
-            pid1.should.be.eql(secondWorkerPid);
-            pid2.should.be.eql(secondWorkerPid);
-            pid3.should.be.eql(secondWorkerPid);
+            pid1.should.be.eql(secondWorkerPid, 'use the second Worker');
+            pid2.should.be.eql(secondWorkerPid, 'use the second Worker');
+            pid3.should.be.eql(secondWorkerPid, 'use the second Worker');
 
-            pid4.should.not.be.eql(firstWorkerPid);
-            pid4.should.not.be.eql(secondWorkerPid);
+            pid4.should.not.be.eql(firstWorkerPid, 'do not use the first Worker');
+            pid4.should.not.be.eql(secondWorkerPid, 'do not use the second Worker');
         });
     });
 
