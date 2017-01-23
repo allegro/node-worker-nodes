@@ -1,7 +1,12 @@
+1.3.0 / 2017-01-23
+==================
+
+  * Workers do not accept work when they are in process of booting up (@mheiniger)
+  
 1.2.1 / 2016-12-19
 ==================
 
-  * Dependencies update
+ * Dependencies update
 
 1.2.0 / 2016-11-08
 ==================
