@@ -1,6 +1,5 @@
 const WorkerNodes = require('../');
 const errors = require('../lib/errors');
-const until = require('test-until');
 
 const { fixture, wait, unique, isRunning } = require('./utils');
 
@@ -223,40 +222,24 @@ describe('worker nodes', function () {
 
         it('should only use workers that are fully initialized', function* () {
             // given
-            const minWorkers = 2;
-            workerNodes = new WorkerNodes(fixture('slow-module'), { autoStart: true, minWorkers, maxWorkers: 2 });
+            workerNodes = new WorkerNodes(fixture('slow-module'), {
+                autoStart: true,
+                minWorkers: 2,
+                maxWorkers: 2,
+                taskMaxRetries: Infinity
+            });
             yield workerNodes.ready();
 
-            // when
             const firstWorkerPid = yield workerNodes.call.getPid();
             const secondWorkerPid = yield workerNodes.call.getPid();
 
-            // kill the first worker
-            yield workerNodes.call.exit().catch(error => error);
-
-            // the second worker should receive everything until the new one comes up
-            const pid1 = yield workerNodes.call.getPid();
-            yield workerNodes.call.task100ms();
-            const pid2 = yield workerNodes.call.getPid();
-            yield workerNodes.call.task100ms();
-            const pid3 = yield workerNodes.call.getPid();
-
-            // wait for the slow worker to come up
-            yield until(() => {
-                return workerNodes.workersQueue.storage
-                    .map(worker => worker.isProcessAlive)
-                    .filter(value => value)
-                    .length == minWorkers
-            });
-            const pid4 = yield workerNodes.call.getPid();
+            // when
+            process.kill(firstWorkerPid, 'SIGKILL');
+            const results = yield (4).times.call(workerNodes.call.getPid).and.waitForAllResults();
 
             // then
-            pid1.should.be.eql(secondWorkerPid, 'use the second Worker');
-            pid2.should.be.eql(secondWorkerPid, 'use the second Worker');
-            pid3.should.be.eql(secondWorkerPid, 'use the second Worker');
-
-            pid4.should.not.be.eql(firstWorkerPid, 'do not use the first Worker');
-            pid4.should.not.be.eql(secondWorkerPid, 'do not use the second Worker');
+            unique(results).should.have.lengthOf(1);
+            results.forEach(pid => pid.should.eql(secondWorkerPid));
         });
     });
 
