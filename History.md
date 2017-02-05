@@ -1,7 +1,13 @@
+1.3.1 / 2017-02-05
+==================
+
+  * Minor performance fix: getting rid of array destructuring as it prevents code runtime optimization
+  in current v8
+  
 1.3.0 / 2017-01-23
 ==================
 
-  * Workers do not accept work when they are in process of booting up (@mheiniger)
+* Workers do not accept work when they are in process of booting up (@mheiniger)
   
 1.2.1 / 2016-12-19
 ==================
