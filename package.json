@@ -39,6 +39,7 @@
     "sinon": "^1.17.6"
   },
   "dependencies": {
-    "bson": "^1.0.1"
+    "bson": "^1.0.1",
+    "msgpack-lite": "^0.1.26"
   }
 }
