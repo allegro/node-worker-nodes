@@ -1,3 +1,8 @@
+1.4.0 / 2017-05-29
+==================
+
+  * bson serializer replaced with message-pack (@noam-almog)
+
 1.3.1 / 2017-02-05
 ==================
 
