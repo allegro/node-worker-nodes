@@ -77,6 +77,7 @@ Describes a WorkerNodes options.
     * [.taskTimeout](#WorkerNodesOptions+taskTimeout) : <code>Number</code>
     * [.taskMaxRetries](#WorkerNodesOptions+taskMaxRetries) : <code>Number</code>
     * [.workerEndurance](#WorkerNodesOptions+workerEndurance) : <code>Number</code>
+    * [.shiftWorkers](#WorkerNodesOptions+shiftWorkers) : <code>Boolean</code>
     * [.workerStopTimeout](#WorkerNodesOptions+workerStopTimeout) : <code>Number</code>
     * [.maxMessageSize](#WorkerNodesOptions+maxMessageSize) : <code>Number</code>
 
@@ -150,6 +151,16 @@ Exceeding this limit causes the termination of the worker.
 
 **Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
 **Default**: <code>Infinity</code>  
+<a name="WorkerNodesOptions+shiftWorkers"></a>
+
+### options.shiftWorkers : <code>Boolean</code>
+Whether to shift the stop and start of workers
+
+If shiftWorkers is true, and workerEndurance and autoStart is used, it shifts the stop and start of workers,
+so they don't stop all at the same time.
+
+**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Default**: <code>false</code>  
 <a name="WorkerNodesOptions+workerStopTimeout"></a>
 
 ### options.workerStopTimeout : <code>Number</code>
