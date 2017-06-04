@@ -78,7 +78,7 @@ Describes a WorkerNodes options.
     * [.taskMaxRetries](#WorkerNodesOptions+taskMaxRetries) : <code>Number</code>
     * [.workerEndurance](#WorkerNodesOptions+workerEndurance) : <code>Number</code>
     * [.workerStopTimeout](#WorkerNodesOptions+workerStopTimeout) : <code>Number</code>
-    * [.maxMessageSize](#WorkerNodesOptions+maxMessageSize) : <code>Number</code>
+
 
 <a name="WorkerNodesOptions+autoStart"></a>
 
@@ -157,13 +157,8 @@ The timeout value (in milliseconds) for the worker to stop before sending SIGKIL
 
 **Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
 **Default**: <code>100</code>  
-<a name="WorkerNodesOptions+maxMessageSize"></a>
+<a name="WorkerNodesOptions+workerStopTimeout"></a>
 
-### options.maxMessageSize : <code>Number</code>
-The maximum size (in bytes) of a message that could be send to/from a worker.
-
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
-**Default**: <code>8388608</code>  
 
 ## Example
 

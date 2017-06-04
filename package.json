@@ -22,7 +22,7 @@
   },
   "scripts": {
     "docs": "jsdoc2md -l off -t docs-src/Readme.hbs lib/*.js > Readme.md; echo",
-    "test": "mocha -r tests/utils/setup.js {lib,tests}/**/*.spec.js",
+    "test": "mocha --trace-warnings -r tests/utils/setup.js {lib,tests}/**/*.spec.js",
     "benchmark": "cd benchmark; npm install; npm test;"
   },
   "contributors": [
@@ -35,7 +35,7 @@
     "is-running": "^2.1.0",
     "jsdoc-to-markdown": "^2.0.1",
     "lodash.uniq": "^4.5.0",
-    "mocha": "^3.1.2",
+    "mocha": "^3.4.2",
     "sinon": "^1.17.6"
   },
   "dependencies": {
