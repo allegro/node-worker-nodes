@@ -1,15 +1,12 @@
 const WorkerNodes = require('../');
 const errors = require('../lib/errors');
 
-const { fixture, wait, unique, isRunning } = require('./utils');
+const { wait, unique, isRunning } = require('./utils');
+const { givenWorkerPoolWith, givenStartedWorkerPoolWith, shutdown } = require('./worker-nodes-test-support');
 
 describe('worker nodes', function () {
 
-    let workerNodes;
-
-    afterEach(function* () {
-        if (workerNodes) yield workerNodes.terminate();
-    });
+    after(shutdown);
 
     it('should be exposed as a constructor function', function () {
         // given
@@ -21,7 +18,7 @@ describe('worker nodes', function () {
 
     it('should report its readiness', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('process-info'));
+        const workerNodes = givenWorkerPoolWith('process-info');
 
         // when
         const ready = yield workerNodes.ready();
@@ -34,7 +31,7 @@ describe('worker nodes', function () {
 
         it('should be exposed as a function named call', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-function-sync'));
+            const workerNodes = givenWorkerPoolWith('echo-function-sync');
 
             // expect
             workerNodes.should.have.property('call').that.is.a('function');
@@ -42,7 +39,7 @@ describe('worker nodes', function () {
 
         it('should support single, synchronous function', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-function-sync'));
+            const workerNodes = givenWorkerPoolWith('echo-function-sync');
 
             // when
             const result = yield workerNodes.call('hello!');
@@ -53,7 +50,7 @@ describe('worker nodes', function () {
 
         it('should support single, asynchronous function', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-function-async'));
+            const workerNodes = givenWorkerPoolWith('echo-function-async');
 
             // when
             const result = yield workerNodes.call('hello!');
@@ -64,7 +61,7 @@ describe('worker nodes', function () {
 
         it('should support module that exports multiple functions', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-module-callable'));
+            const workerNodes = givenWorkerPoolWith('echo-module-callable');
 
             // when
             const resultFoo = yield workerNodes.call('hello foo!');
@@ -79,7 +76,7 @@ describe('worker nodes', function () {
 
         it('should retain this context of the module methods', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-module-plain'));
+            const workerNodes = givenWorkerPoolWith('echo-module-plain');
 
             // when
             const result = yield workerNodes.call.echoMethod('this retained!');
@@ -90,7 +87,7 @@ describe('worker nodes', function () {
 
         it('should fail when trying to call directly a module that is not a function', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-module-plain'));
+            const workerNodes = givenWorkerPoolWith('echo-module-plain');
 
             // when
             const result = yield workerNodes.call().catch(error => error);
@@ -101,7 +98,7 @@ describe('worker nodes', function () {
 
         it('should fail when trying to call a property that is not a function', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-module-plain'));
+            const workerNodes = givenWorkerPoolWith('echo-module-plain');
 
             // when
             const result = yield workerNodes.call.echo().catch(error => error);
@@ -112,7 +109,7 @@ describe('worker nodes', function () {
 
         it('should fail when dealing with non-existing function', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('echo-function-sync'));
+            const workerNodes = givenWorkerPoolWith('echo-function-sync');
 
             // when
             const result = yield workerNodes.call.nonExistingFunction().catch(error => error);
@@ -125,7 +122,7 @@ describe('worker nodes', function () {
 
     it('should allow to load a module that has dependencies', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('echo-module-with-imports'));
+        const workerNodes = givenWorkerPoolWith('echo-module-with-imports');
 
         // when
         const result = yield workerNodes.call.echoSync('hello!');
@@ -136,7 +133,7 @@ describe('worker nodes', function () {
 
     it('should *not* use the same process as the caller does', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('process-info'));
+        const workerNodes = givenWorkerPoolWith('process-info');
 
         // when
         const result = yield workerNodes.call.getPid();
@@ -147,7 +144,7 @@ describe('worker nodes', function () {
 
     it('should allow limit the number of workers active in a given time', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('process-info'), { maxWorkers: 1 });
+        const workerNodes = givenWorkerPoolWith('process-info', { maxWorkers: 1 });
 
         // when
         const results = yield (10).times.call(workerNodes.call.getPid).and.waitForAllResults();
@@ -158,7 +155,7 @@ describe('worker nodes', function () {
 
     it('should not use a single worker more times than a given limit', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('process-info'), { maxWorkers: 1, workerEndurance: 2 });
+        const workerNodes = givenWorkerPoolWith('process-info', { maxWorkers: 1, workerEndurance: 2 });
 
         // when
         const results = yield (10).times.call(workerNodes.call.getPid).and.waitForAllResults();
@@ -169,8 +166,7 @@ describe('worker nodes', function () {
 
     it('should distribute the work evenly among available workers', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, maxWorkers: 10, minWorkers: 10 });
-        yield workerNodes.ready();
+        const workerNodes = yield givenStartedWorkerPoolWith('process-info', { autoStart: true, maxWorkers: 10, minWorkers: 10 });
 
         // when
         const results = yield (10).times.call(workerNodes.call.getPid).and.waitForAllResults();
@@ -183,7 +179,7 @@ describe('worker nodes', function () {
 
         it('should be disabled by default', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'));
+            const workerNodes = givenWorkerPoolWith('process-info');
 
             // when
             const callTime = Date.now();
@@ -195,7 +191,7 @@ describe('worker nodes', function () {
 
         it('should result in spawn of the workers before the first call if active', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, maxWorkers: 1 });
+            const workerNodes = givenWorkerPoolWith('process-info', { autoStart: true, maxWorkers: 1 });
 
             // when
             yield wait(500);
@@ -208,8 +204,7 @@ describe('worker nodes', function () {
 
         it('should force the workerNodes to wait for all the required workers to start before reporting ready', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, minWorkers: 4, maxWorkers: 4 });
-            yield workerNodes.ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('process-info', { autoStart: true, minWorkers: 4, maxWorkers: 4 });
             const callStartTime = Date.now();
 
             // when
@@ -222,13 +217,12 @@ describe('worker nodes', function () {
 
         it('should only use workers that are fully initialized', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('slow-module'), {
-                autoStart: true,
-                minWorkers: 2,
-                maxWorkers: 2,
-                taskMaxRetries: Infinity
+            const workerNodes = yield givenStartedWorkerPoolWith('slow-module', {
+              autoStart: true,
+              minWorkers: 2,
+              maxWorkers: 2,
+              taskMaxRetries: Infinity
             });
-            yield workerNodes.ready();
 
             const firstWorkerPid = yield workerNodes.call.getPid();
             const secondWorkerPid = yield workerNodes.call.getPid();
@@ -241,14 +235,14 @@ describe('worker nodes', function () {
             unique(results).should.have.lengthOf(1);
             results.forEach(pid => pid.should.eql(secondWorkerPid));
         });
+
     });
 
     describe('lazy start', function () {
 
         it('should be disabled by default', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, minWorkers: 2, maxWorkers: 4 });
-            yield workerNodes.ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('process-info', { autoStart: true, minWorkers: 2, maxWorkers: 4 });
             const callStartTime = Date.now();
 
             // when
@@ -261,13 +255,12 @@ describe('worker nodes', function () {
 
         it('should cause only the minimum required number of workers to start at init', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), {
+            const workerNodes = yield givenStartedWorkerPoolWith('process-info', {
                 autoStart: true,
                 lazyStart: true,
                 minWorkers: 2,
                 maxWorkers: 4
             });
-            yield workerNodes.ready();
             const callStartTime = Date.now();
 
             // when
@@ -281,12 +274,11 @@ describe('worker nodes', function () {
 
         it('should not affect work assignment to the workers by default', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), {
+            const workerNodes = yield givenStartedWorkerPoolWith('process-info', {
                 autoStart: true,
                 minWorkers: 3,
                 maxWorkers: 3
             });
-            yield workerNodes.ready();
 
             // when
             const results1 = yield workerNodes.call.getPid();
@@ -299,7 +291,7 @@ describe('worker nodes', function () {
 
         it('should cause maximum utilization of the existing workers if calls are sequential', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), {
+            const workerNodes = givenWorkerPoolWith('process-info', {
                 lazyStart: true,
                 minWorkers: 1,
                 maxWorkers: 3
@@ -316,7 +308,7 @@ describe('worker nodes', function () {
 
         it('should spawn max number of workers to handle the concurrent calls', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('process-info'), {
+            const workerNodes = givenWorkerPoolWith('process-info', {
                 lazyStart: true,
                 minWorkers: 1,
                 maxWorkers: 3
@@ -335,8 +327,8 @@ describe('worker nodes', function () {
 
         it('should be limited to one by default', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('async-tasks'), { maxWorkers: 1 });
-            const startTime = yield workerNodes.ready().then(() => Date.now());
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', { maxWorkers: 1 });
+            const startTime = Date.now();
 
             // when
             yield (10).times.call(workerNodes.call.task100ms).and.waitForAllResults();
@@ -347,8 +339,8 @@ describe('worker nodes', function () {
         });
 
         it('should allow to limit the amount of concurrent calls sent to a single worker', function* () {
-            workerNodes = new WorkerNodes(fixture('async-tasks'), { maxWorkers: 1, maxTasksPerWorker: 5 });
-            const startTime = yield workerNodes.ready().then(() => Date.now());
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', { maxWorkers: 1, maxTasksPerWorker: 5 });
+            const startTime = Date.now();
 
             // when
             yield (10).times.call(workerNodes.call.task100ms).and.waitForAllResults();
@@ -363,10 +355,7 @@ describe('worker nodes', function () {
 
         it('should not affect fast method calls', function* () {
             // given
-            workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
-                taskTimeout: 500,
-                maxWorkers: 1
-            }).ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {taskTimeout: 500, maxWorkers: 1});
 
             // when
             const result = yield workerNodes.call.task100ms().catch(error => error);
@@ -377,10 +366,7 @@ describe('worker nodes', function () {
 
         it('should result in an error when a single method call takes too long', function* () {
             // given
-            workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
-                maxWorkers: 1,
-                taskTimeout: 250
-            }).ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {taskTimeout: 250, maxWorkers: 1});
 
             // when
             const result = yield workerNodes.call.task500ms().catch(error => error);
@@ -391,10 +377,7 @@ describe('worker nodes', function () {
 
         it('should kill the worker that was involved in processing the task', function* () {
             // given
-            workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
-                maxWorkers: 1,
-                taskTimeout: 250,
-            }).ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {taskTimeout: 250, maxWorkers: 1});
 
             // when
             const workerPid = yield workerNodes.call.getPid();
@@ -407,13 +390,13 @@ describe('worker nodes', function () {
 
         it('should result with rejection of all the calls that the worker was processing at the moment', function* () {
             // given
-            workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
-                autoStart: true,
-                minWorkers: 1,
-                maxWorkers: 1,
-                maxTasksPerWorker: 2,
-                taskTimeout: 250,
-            }).ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {
+              autoStart: true,
+              minWorkers: 1,
+              maxWorkers: 1,
+              maxTasksPerWorker: 2,
+              taskTimeout: 250,
+            });
 
             // when
             const failingCall = workerNodes.call.task500ms().catch(error => error);
@@ -427,11 +410,11 @@ describe('worker nodes', function () {
 
         it('should result in the spawn of a new worker', function* () {
             // given
-            workerNodes = yield new WorkerNodes(fixture('async-tasks'), {
-                maxWorkers: 1,
-                maxTasksPerWorker: Infinity,
-                taskTimeout: 250,
-            }).ready();
+            const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {
+              maxWorkers: 1,
+              maxTasksPerWorker: Infinity,
+              taskTimeout: 250,
+            });
 
             // when
             const pidBefore = yield workerNodes.call.getPid();
@@ -449,7 +432,7 @@ describe('worker nodes', function () {
 
         it('should be propagated to a caller', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('messy-module'));
+            const workerNodes = givenWorkerPoolWith('messy-module');
 
             // when
             const result = yield workerNodes.call.typeError().catch(error => error);
@@ -460,7 +443,7 @@ describe('worker nodes', function () {
 
         it('should contain proper call stack', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('messy-module'));
+            const workerNodes = givenWorkerPoolWith('messy-module');
 
             // when
             const result = yield workerNodes.call.typeError().catch(error => error);
@@ -471,7 +454,7 @@ describe('worker nodes', function () {
 
         it('should be propagated with error type info retained', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('messy-module'));
+            const workerNodes = givenWorkerPoolWith('messy-module');
 
             // when
             const resultFoo = yield workerNodes.call.typeError().catch(error => error);
@@ -484,7 +467,7 @@ describe('worker nodes', function () {
 
         it('should be propagated with all the custom error fields that they have', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('messy-module'));
+            const workerNodes = givenWorkerPoolWith('messy-module');
 
             // when
             const resultFoo = yield workerNodes.call.customError({ foo: 1, bar: 2 }).catch(error => error);
@@ -495,7 +478,7 @@ describe('worker nodes', function () {
 
         it('should be wrapped in an Error object if they were promise rejections', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('messy-module'));
+            const workerNodes = givenWorkerPoolWith('messy-module');
 
             // when
             const resultFoo = yield workerNodes.call.promiseRejection({ reason: 'rejection reason' }).catch(error => error);
@@ -506,7 +489,7 @@ describe('worker nodes', function () {
 
         it('should not result in the spawn of a new worker', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('messy-module'), { maxWorkers: 1 });
+            const workerNodes = givenWorkerPoolWith('messy-module', { maxWorkers: 1 });
 
             // when
             const pidBefore = yield workerNodes.call.getPid();
@@ -520,14 +503,13 @@ describe('worker nodes', function () {
 
     it('should reject calls that exceeds given limit', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('async-tasks'), {
+        const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {
             autoStart: true,
             minWorkers: 2,
             maxWorkers: 2,
             maxTasksPerWorker: 5,
             maxTasks: 5
         });
-        yield workerNodes.ready();
 
         // when
         const results = yield (10).times.call(workerNodes.call.task100ms).and.waitForAllResults();
@@ -539,7 +521,7 @@ describe('worker nodes', function () {
 
     it('should kill worker that got stuck in an infinite loop', function* () {
         // given
-        workerNodes = new WorkerNodes(fixture('harmful-module'), { taskTimeout: 500, maxWorkers: 1 });
+        const workerNodes = givenWorkerPoolWith('harmful-module', { taskTimeout: 500, maxWorkers: 1 });
 
         // when
         const pid = yield workerNodes.call.getPid();
@@ -554,7 +536,7 @@ describe('worker nodes', function () {
 
         it('should be disabled by default', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('harmful-module'), { maxWorkers: 1 });
+            const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1 });
 
             // when
             const result = yield workerNodes.call.exitAlways().catch(error => error);
@@ -565,7 +547,7 @@ describe('worker nodes', function () {
 
         it('should give up after max retries limit has been reached', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('harmful-module'), { maxWorkers: 1, taskMaxRetries: 3 });
+            const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: 3 });
 
             // when
             const result = yield workerNodes.call.exitAlways().catch(error => error);
@@ -578,7 +560,7 @@ describe('worker nodes', function () {
 
         it('should be successful if previously failing task would reconsider its behaviour', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('harmful-module'), { maxWorkers: 1, taskMaxRetries: 3 });
+            const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: 3 });
 
             // when
             yield workerNodes.call.setSomeJobFailsNumber(2);
@@ -590,8 +572,8 @@ describe('worker nodes', function () {
 
         it('should put through number of retries', function* () {
             // given
-            this.timeout(3000);
-            workerNodes = new WorkerNodes(fixture('harmful-module'), { maxWorkers: 1, taskMaxRetries: Infinity });
+            const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: Infinity });
+            this.timeout(5000);
 
             // when
             const results = yield (10).times.call(workerNodes.call.exitRandomly).and.waitForAllResults();
@@ -607,7 +589,7 @@ describe('worker nodes', function () {
 
         it('should allow to receive a raw buffer from the worker', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('buffer-ready-module'));
+            const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
             // when
             const result = yield workerNodes.call.getDeflated('hello my friend!!!');
@@ -620,7 +602,7 @@ describe('worker nodes', function () {
 
         it('should allow to receive a raw buffer as an object property', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('buffer-ready-module'));
+            const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
             // when
             const result = yield workerNodes.call.getDeflatedInProperty('hello my friend!!!');
@@ -633,7 +615,7 @@ describe('worker nodes', function () {
 
         it('should allow to send a raw buffer to the worker', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('buffer-ready-module'));
+            const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
             // when
             const result = yield workerNodes.call.isBuffer(Buffer.from('foobar'));
@@ -644,7 +626,7 @@ describe('worker nodes', function () {
 
         it('should be available in both directions', function* () {
             // given
-            workerNodes = new WorkerNodes(fixture('buffer-ready-module'));
+            const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
             // when
             const result = yield workerNodes.call.sliceInHalf(Buffer.from('foobar'));
