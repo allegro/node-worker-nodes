@@ -1,7 +1,12 @@
+1.5.0 / 2017-06-22
+==================
+
+  * message-pack streaming (@noam-almog)
+  
 1.4.0 / 2017-05-29
 ==================
 
-  * bson serializer replaced with message-pack (@noam-almog)
+* bson serializer replaced with message-pack (@noam-almog)
 
 1.3.1 / 2017-02-05
 ==================
