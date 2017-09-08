@@ -4,7 +4,7 @@
 
 # worker-nodes
 
-  A node.js library to run cpu-intensive tasks in a separate processes and to not to block the event loop.
+  A node.js library to run cpu-intensive tasks in a separate processes and to not block the event loop.
 
 
 ## Installation
