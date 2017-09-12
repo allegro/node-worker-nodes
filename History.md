@@ -1,3 +1,10 @@
+1.6.0 / 2017-09-12
+==================
+
+  * message-pack streaming disabled
+  * typescript definitions added (@MariusAlch)
+  * readme typo fixes (@crcastle)
+
 1.5.0 / 2017-06-22
 ==================
 
