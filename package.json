@@ -1,6 +1,6 @@
 {
   "name": "worker-nodes",
-  "version": "1.6.1",
+  "version": "2.0.0-alpha.1",
   "description": "A library to run cpu-intensive tasks without blocking the event loop.",
   "keywords": [
     "workers",
@@ -18,11 +18,11 @@
   "homepage": "https://github.com/allegro/node-worker-nodes",
   "main": "./lib/index.js",
   "engines": {
-    "node": ">=6.6.0"
+    "node": ">=10.5.0"
   },
   "scripts": {
     "docs": "jsdoc2md -l off -t docs-src/Readme.hbs lib/*.js > Readme.md; echo",
-    "test": "mocha --trace-warnings -r tests/utils/setup.js {lib,tests}/**/*.spec.js",
+    "test": "node --experimental-worker node_modules/.bin/_mocha --trace-warnings -r tests/utils/setup.js {lib,tests}/**/*.spec.js",
     "benchmark": "cd benchmark; npm install; npm test;"
   },
   "contributors": [
@@ -37,9 +37,6 @@
     "lodash.uniq": "^4.5.0",
     "mocha": "^3.4.2",
     "sinon": "^1.17.6"
-  },
-  "dependencies": {
-    "msgpack-lite": "^0.1.26"
   },
   "types": "./index.d.ts"
 }
