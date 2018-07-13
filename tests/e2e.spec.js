@@ -131,7 +131,7 @@ describe('worker nodes', function () {
         result.should.be.eql('hello!');
     });
 
-    it('should *not* use the same process as the caller does', function* () {
+    it('should use the same process as the caller does', function* () {
         // given
         const workerNodes = givenWorkerPoolWith('process-info');
 
@@ -139,7 +139,7 @@ describe('worker nodes', function () {
         const result = yield workerNodes.call.getPid();
 
         // then
-        result.should.be.a('number').that.not.eql(process.pid);
+        result.should.be.a('number').that.eql(process.pid);
     });
 
     it('should allow limit the number of workers active in a given time', function* () {
@@ -158,10 +158,10 @@ describe('worker nodes', function () {
         const workerNodes = givenWorkerPoolWith('process-info', { maxWorkers: 1, workerEndurance: 2 });
 
         // when
-        const results = yield (10).times.call(workerNodes.call.getPid).and.waitForAllResults();
+        yield (10).times.call(workerNodes.call.noop).and.waitForAllResults();
 
         // then
-        unique(results).should.have.lengthOf(5);
+        workerNodes.workersQueue.forEach(worker => worker.tasksStarted.should.be.at.most(2));
     });
 
     it('should distribute the work evenly among available workers', function* () {
@@ -172,7 +172,7 @@ describe('worker nodes', function () {
         const results = yield (10).times.call(workerNodes.call.getPid).and.waitForAllResults();
 
         // then
-        unique(results).should.have.lengthOf(10);
+        workerNodes.workersQueue.forEach(worker => worker.tasksStarted.should.eql(1));
     });
 
     describe('auto-start', function () {
@@ -183,10 +183,15 @@ describe('worker nodes', function () {
 
             // when
             const callTime = Date.now();
-            const workerStartTime = yield workerNodes.call.getStartTime();
+            yield workerNodes.call.noop();
 
             // then
-            workerStartTime.should.be.at.least(callTime);
+            workerNodes.workersQueue.forEach(worker => {
+                const startDate = worker.process.startDate;
+                if (startDate) {
+                    startDate.should.be.at.least(callTime);
+                }
+            });
         });
 
         it('should result in spawn of the workers before the first call if active', function* () {
@@ -224,16 +229,16 @@ describe('worker nodes', function () {
               taskMaxRetries: Infinity
             });
 
-            const firstWorkerPid = yield workerNodes.call.getPid();
-            const secondWorkerPid = yield workerNodes.call.getPid();
+            yield (4).times.call(workerNodes.call.getPid).and.waitForAllResults();
 
             // when
-            process.kill(firstWorkerPid, 'SIGKILL');
-            const results = yield (4).times.call(workerNodes.call.getPid).and.waitForAllResults();
+            workerNodes.workersQueue.storage[0].process.exit();
+            yield (4).times.call(workerNodes.call.getPid).and.waitForAllResults();
+
+            const results = workerNodes.workersQueue.filter(worker => worker.isProcessAlive);
 
             // then
             unique(results).should.have.lengthOf(1);
-            results.forEach(pid => pid.should.eql(secondWorkerPid));
         });
 
     });
@@ -264,7 +269,8 @@ describe('worker nodes', function () {
             const callStartTime = Date.now();
 
             // when
-            const results = yield (4).times.call(workerNodes.call.getStartTime).and.waitForAllResults();
+            yield (4).times.call(workerNodes.call.noop).and.waitForAllResults();
+            const results = workerNodes.workersQueue.map(worker => worker.process.startDate);
 
             // then
             results.should.have.lengthOf(4);
@@ -281,12 +287,13 @@ describe('worker nodes', function () {
             });
 
             // when
-            const results1 = yield workerNodes.call.getPid();
-            const results2 = yield workerNodes.call.getPid();
-            const results3 = yield workerNodes.call.getPid();
+            yield workerNodes.call.getPid();
+            yield workerNodes.call.getPid();
+            yield workerNodes.call.getPid();
+            const result = workerNodes.workersQueue.map(worker => worker.tasksStarted);
 
             // then
-            unique([ results1, results2, results3 ]).should.have.lengthOf(3);
+            result.should.deep.equal([1, 1, 1]);
         });
 
         it('should cause maximum utilization of the existing workers if calls are sequential', function* () {
@@ -315,10 +322,10 @@ describe('worker nodes', function () {
             });
 
             // when
-            const results = yield (4).times.call(workerNodes.call.getStartTime).and.waitForAllResults();
+            yield (4).times.call(workerNodes.call.noop).and.waitForAllResults();
 
             // then
-            unique(results).should.have.lengthOf(3);
+            workerNodes.workersQueue.storage.should.have.lengthOf(3);
         });
 
     });
@@ -380,15 +387,16 @@ describe('worker nodes', function () {
             const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {taskTimeout: 250, maxWorkers: 1});
 
             // when
-            const workerPid = yield workerNodes.call.getPid();
             yield workerNodes.call.task500ms().catch(error => error);
             yield wait(20); // give the process a time to shutdown
 
             // then
-            isRunning(workerPid).should.be.eql(false);
+            workerNodes.workersQueue.storage.should.have.lengthOf(0);
         });
 
         it('should result with rejection of all the calls that the worker was processing at the moment', function* () {
+            //note: (non deterministic test) this test fails sometimes
+
             // given
             const workerNodes = yield givenStartedWorkerPoolWith('async-tasks', {
               autoStart: true,
@@ -417,13 +425,15 @@ describe('worker nodes', function () {
             });
 
             // when
-            const pidBefore = yield workerNodes.call.getPid();
+            yield workerNodes.call.noop();
+            const idBefore = workerNodes.workersQueue.storage[0].id;
             const callResult = yield workerNodes.call.task500ms().catch(error => error);
-            const pidAfter = yield workerNodes.call.getPid();
+            yield workerNodes.call.noop();
+            const idAfter = workerNodes.workersQueue.storage[0].id;
 
             // then
             callResult.should.be.an.instanceOf(errors.TimeoutError);
-            pidBefore.should.be.a('number').that.is.not.eql(pidAfter);
+            idBefore.should.be.a('number').that.is.not.eql(idAfter);
         });
 
     });
@@ -521,15 +531,14 @@ describe('worker nodes', function () {
 
     it('should kill worker that got stuck in an infinite loop', function* () {
         // given
+        this.timeout(1500);
         const workerNodes = givenWorkerPoolWith('harmful-module', { taskTimeout: 500, maxWorkers: 1 });
 
         // when
-        const pid = yield workerNodes.call.getPid();
-        yield workerNodes.call.infiniteLoop().catch(error => error);
-        yield wait(250); // give the process a time to shutdown
+        const result = yield workerNodes.call.infiniteLoop().catch(error => error);
 
         // then
-        isRunning(pid).should.be.eql(false);
+        result.should.be.an.instanceOf(errors.TimeoutError);
     });
 
     describe('failure recovery', function () {
@@ -579,15 +588,14 @@ describe('worker nodes', function () {
             const results = yield (10).times.call(workerNodes.call.exitRandomly).and.waitForAllResults();
 
             // then
-            results.length.should.be.at.least(10);
-            unique(results).length.should.be.at.least(3);
+            results.length.should.be.equal(10);
         });
 
     });
 
     describe('raw data passing', function () {
 
-        it('should allow to receive a raw buffer from the worker', function* () {
+        it('should allow to receive a Uint8Array from the worker', function* () {
             // given
             const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
@@ -596,11 +604,11 @@ describe('worker nodes', function () {
             const decoded = require('zlib').inflateSync(result).toString();
 
             // then
-            result.should.be.an.instanceOf(Buffer);
+            result.should.be.an.instanceOf(Uint8Array);
             decoded.should.be.eql('hello my friend!!!');
         });
 
-        it('should allow to receive a raw buffer as an object property', function* () {
+        it('should allow to receive a Uint8Array as an object property', function* () {
             // given
             const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
@@ -609,16 +617,16 @@ describe('worker nodes', function () {
 
             // then
             result.info.should.be.a('string').that.eql('deflate');
-            result.data.should.be.an.instanceOf(Buffer);
+            result.data.should.be.an.instanceOf(Uint8Array);
             require('zlib').inflateSync(result.data).toString().should.be.eql('hello my friend!!!');
         });
 
-        it('should allow to send a raw buffer to the worker', function* () {
+        it('should allow to send a Uint8Array to the worker', function* () {
             // given
             const workerNodes = givenWorkerPoolWith('buffer-ready-module');
 
             // when
-            const result = yield workerNodes.call.isBuffer(Buffer.from('foobar'));
+            const result = yield workerNodes.call.isUint8Array(Buffer.from('foobar'));
 
             // then
             result.should.be.eql(true);

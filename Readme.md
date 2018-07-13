@@ -4,16 +4,18 @@
 
 # worker-nodes
 
-  A node.js library to run cpu-intensive tasks in a separate processes and to not block the event loop.
+*THIS IS AN EXPERIMENTAL BRANCH, IT USES [worker_threads](https://nodejs.org/api/worker_threads.html) WHICH IS NOT STABLE YET*
+
+  A node.js library to run cpu-intensive tasks in a separate thread and to not block the event loop.
 
 
 ## Installation
 
 ```bash
-$ npm install worker-nodes
+$ npm install worker-nodes@next
 ```
 
-  Node.js greater than 6.6.0 highly recommended.
+  Node.js greater than 10.5.0 is *required*
 
 # API Reference
 
@@ -206,18 +208,18 @@ Example results:
 ```bash
 results for 100 executions
 
-name                time: total [ms]  time usr [ms]  time sys [ms]  worker usr [ms]  worker sys [ms]  mem rss [MB]  worker rss [MB]  errors
-------------------  ----------------  -------------  -------------  ---------------  ---------------  ------------  ---------------  ------
-no-workers                       150            239             42                0                0            98                0       0
-worker-nodes@1.2.0              1521            646            528              641              367           272              119       0
-workerpool@2.1.0               12055           7356           5726              896              212           731               74       0
-worker-farm@1.3.1              12124           6711           5501             1577              446           689               74       0
-process-pool@0.3.4             12348           6866           5474             1696              458           698               76       0
-worker-pool@3.0.2              14029           7633           5604             2285              649           769              104       0
+name                 time: total [ms]  time usr [ms]  time sys [ms]  worker usr [ms]  worker sys [ms]  mem rss [MB]  worker rss [MB]  errors
+------------------   ----------------  -------------  -------------  ---------------  ---------------  ------------  ---------------  ------
+no-workers                        162            250             38                0                0           101                0       0
+worker-nodes@next                 458            573            186              571              185           210              207       0
+worker-nodes@1.6.1               1503            670            395              991              337           292               87       0
+workerpool@2.3.0                 1684           1511            688              292               82           155               49       0
+worker-farm@1.6.0                2508           1435            511             1247              368           104               59       0
+process-pool@0.3.4               2571           1537            517             1333              376           105               61       0
+worker-pool@3.0.2               15939          15984           5632             1946              546            86               79       0
 
-os : Darwin / 15.5.0 / x64
-cpu : Intel(R) Core(TM) i7-4578U CPU @ 3.00GHz × 4
-node : 6.9.1 / v8: 5.1.281.84
+  os : Darwin / 17.5.0 / x64
+ cpu : Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz × 8
 ```
 
 ## See also

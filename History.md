@@ -1,3 +1,8 @@
+2.0.0-alpha.1 / 2018-07-16
+==================
+
+  * use experimental worker_threads to run tasks
+
 1.6.1 / 2018-06-20
 ==================
 
@@ -14,7 +19,7 @@
 ==================
 
   * message-pack streaming (@noam-almog)
-  
+
 1.4.0 / 2017-05-29
 ==================
 
@@ -25,12 +30,12 @@
 
   * Minor performance fix: getting rid of array destructuring as it prevents code runtime optimization
   in current v8
-  
+
 1.3.0 / 2017-01-23
 ==================
 
 * Workers do not accept work when they are in process of booting up (@mheiniger)
-  
+
 1.2.1 / 2016-12-19
 ==================
 
@@ -46,7 +51,7 @@
 ==================
 
   * Added <code>useCompression</code> option
-  
+
 1.0.0 / 2016-11-01
 ==================
 
