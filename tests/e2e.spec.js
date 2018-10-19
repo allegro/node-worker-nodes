@@ -567,6 +567,32 @@ describe('worker nodes', function () {
                 .that.has.property('message', 'cancel after 3 retries!');
         });
 
+        it('should catch thrown exceptions', function* () {
+            // given
+            const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: 0 });
+
+            // when
+            const result = yield workerNodes.call.throwsAlways().catch(error => error);
+
+            // then
+            result.should.be
+                .an.instanceOf(Error)
+                .that.has.property('message', 'thrown');
+        });
+
+        it('should catch rejected promises', function* () {
+            // given
+            const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: 0 });
+
+            // when
+            const result = yield workerNodes.call.rejectAlways().catch(error => error);
+
+            // then
+            result.should.be
+                .an.instanceOf(Error)
+                .that.has.property('message', 'rejected');
+        });
+
         it('should be successful if previously failing task would reconsider its behaviour', function* () {
             // given
             const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: 3 });

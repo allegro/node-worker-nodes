@@ -9,6 +9,14 @@ module.exports = {
 
     infiniteLoop: () => { while (true); },
 
+    throwsAlways: () => { throw new Error('thrown'); },
+
+    rejectAlways: () => {
+        return new Promise(function(resolve, reject) {
+            reject(new Error('rejected'));
+        });
+    },
+
     setSomeJobFailsNumber: number => fs.writeFileSync(tmpFile, String(number)),
     someJob() {
         let failsLeft = fs.existsSync(tmpFile) ? parseInt(fs.readFileSync(tmpFile, 'utf8')) : 0;
