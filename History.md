@@ -1,3 +1,10 @@
+2.0.0-rc.1 / 2019-02-21
+==================
+
+  * use experimental worker_threads to run tasks (@slonka)
+  * drop -alpha.x as worker_threads are exposed by default (since node.js 11.7.0) and some issues with inspecting them 
+    were resolved (since 11.10.0)
+
 2.0.0-alpha.1 / 2018-07-16
 ==================
 

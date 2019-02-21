@@ -1,7 +1,6 @@
 const WorkerNodes = require('../');
 const { fixture } = require('./utils');
 
-
 const allocatedPools = [];
 
 function givenWorkerPoolWith(script, options) {
@@ -10,9 +9,9 @@ function givenWorkerPoolWith(script, options) {
   return pool;
 }
 
-function* givenStartedWorkerPoolWith(script, options) {
+async function givenStartedWorkerPoolWith(script, options) {
   const pool = givenWorkerPoolWith(script, options);
-  yield pool.ready();
+  await pool.ready();
   return pool;
 }
 

@@ -4,9 +4,7 @@
 
 # worker-nodes
 
-*THIS IS AN EXPERIMENTAL BRANCH, IT USES [worker_threads](https://nodejs.org/api/worker_threads.html) WHICH IS NOT STABLE YET*
-
-  A node.js library to run cpu-intensive tasks in a separate thread and to not block the event loop.
+  A node.js library to run cpu-intensive tasks in a separate processes and to not to block the event loop.
 
 
 ## Installation
@@ -15,7 +13,7 @@
 $ npm install worker-nodes@next
 ```
 
-  Node.js greater than 10.5.0 is *required*
+  Node.js greater than 11.7.0 is *required*
 
 # API Reference
 
@@ -46,20 +44,20 @@ This exposes the api of a module that the worker nodes are working on. If the mo
 can call this directly. If the module exports multiple functions, you can call them as they were properties
 of this proxy.
 
-**Kind**: instance property of <code>[WorkerNodes](#WorkerNodes)</code>  
+**Kind**: instance property of [<code>WorkerNodes</code>](#WorkerNodes)  
 <a name="WorkerNodes+ready"></a>
 
 ### workerNodes.ready() ⇒ <code>Promise</code>
 A method to check if the minimum required number of workers are ready to serve the calls.
 
-**Kind**: instance method of <code>[WorkerNodes](#WorkerNodes)</code>  
+**Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
 **Returns**: <code>Promise</code> - resolves with a [WorkerNodes](#WorkerNodes) instance  
 <a name="WorkerNodes+terminate"></a>
 
 ### workerNodes.terminate() ⇒ <code>Promise</code>
 Starts the process of terminating this instance.
 
-**Kind**: instance method of <code>[WorkerNodes](#WorkerNodes)</code>  
+**Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
 **Returns**: <code>Promise</code> - - resolved when the instance is terminated.  
 
 <a name="WorkerNodesOptions"></a>
@@ -81,7 +79,6 @@ Describes a WorkerNodes options.
     * [.workerEndurance](#WorkerNodesOptions+workerEndurance) : <code>Number</code>
     * [.workerStopTimeout](#WorkerNodesOptions+workerStopTimeout) : <code>Number</code>
 
-
 <a name="WorkerNodesOptions+autoStart"></a>
 
 ### options.autoStart : <code>Boolean</code>
@@ -90,21 +87,21 @@ Whether should initialize the workers before a first call.
 If true, depending on the [lazyStart](#WorkerNodesOptions+lazyStart) option, it will start the
 [min](#WorkerNodesOptions+minWorkers) or [max](#WorkerNodesOptions+maxWorkers) number of workers.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>false</code>  
 <a name="WorkerNodesOptions+lazyStart"></a>
 
 ### options.lazyStart : <code>Boolean</code>
 Whether should start a new worker only if all the others are busy.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>false</code>  
 <a name="WorkerNodesOptions+minWorkers"></a>
 
 ### options.minWorkers : <code>Number</code>
 The minimum number of workers that needs to be running to consider the whole pool as operational.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>0</code>  
 <a name="WorkerNodesOptions+maxWorkers"></a>
 
@@ -112,21 +109,21 @@ The minimum number of workers that needs to be running to consider the whole poo
 The maximum number of workers that can be running at the same time.
 Defaults to the number of cores the operating system sees.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 <a name="WorkerNodesOptions+maxTasks"></a>
 
 ### options.maxTasks : <code>Number</code>
 The maximum number of calls that can be handled at the same time.
 Exceeding this limit causes MaxConcurrentCallsError to be thrown.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>Infinity</code>  
 <a name="WorkerNodesOptions+maxTasksPerWorker"></a>
 
 ### options.maxTasksPerWorker : <code>Number</code>
 The number of calls that can be given to a single worker at the same time.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>1</code>  
 <a name="WorkerNodesOptions+taskTimeout"></a>
 
@@ -134,7 +131,7 @@ The number of calls that can be given to a single worker at the same time.
 The number milliseconds after which a call is considered to be lost.
 Exceeding this limit causes TimeoutError to be thrown and a worker that performed that task to be killed.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>Infinity</code>  
 <a name="WorkerNodesOptions+taskMaxRetries"></a>
 
@@ -142,7 +139,7 @@ Exceeding this limit causes TimeoutError to be thrown and a worker that performe
 The maximum number of retries that will be performed over a task before reporting it as incorrectly terminated.
 Exceeding this limit causes ProcessTerminatedError to be thrown.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>0</code>  
 <a name="WorkerNodesOptions+workerEndurance"></a>
 
@@ -150,17 +147,15 @@ Exceeding this limit causes ProcessTerminatedError to be thrown.
 The maximum number of calls that a single worker can handle during its whole lifespan.
 Exceeding this limit causes the termination of the worker.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>Infinity</code>  
 <a name="WorkerNodesOptions+workerStopTimeout"></a>
 
 ### options.workerStopTimeout : <code>Number</code>
 The timeout value (in milliseconds) for the worker to stop before sending SIGKILL.
 
-**Kind**: instance property of <code>[WorkerNodesOptions](#WorkerNodesOptions)</code>  
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>100</code>  
-<a name="WorkerNodesOptions+workerStopTimeout"></a>
-
 
 ## Example
 
@@ -218,8 +213,8 @@ worker-farm@1.6.0                2508           1435            511             
 process-pool@0.3.4               2571           1537            517             1333              376           105               61       0
 worker-pool@3.0.2               15939          15984           5632             1946              546            86               79       0
 
-  os : Darwin / 17.5.0 / x64
- cpu : Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz × 8
+os : Darwin / 17.5.0 / x64
+cpu : Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz × 8
 ```
 
 ## See also

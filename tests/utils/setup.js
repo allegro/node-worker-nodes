@@ -1,5 +1,4 @@
 require('chai').should();
-require('co-mocha');
 
 // used to make tests more readable
 Object.defineProperty(Number.prototype, 'times', {
