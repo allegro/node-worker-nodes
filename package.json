@@ -1,6 +1,6 @@
 {
     "name": "worker-nodes",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "A library to run cpu-intensive tasks without blocking the event loop.",
     "keywords": [
         "workers",

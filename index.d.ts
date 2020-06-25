@@ -15,6 +15,8 @@ interface WorkerNodesInstance {
   call: CallProperty;
   ready: () => Promise<WorkerNodesInstance>;
   terminate: () => Promise<WorkerNodesInstance>;
+  profiler: (duration?: number) => void;
+  takeSnapshot: () => void;
 }
 
 interface CallProperty {
