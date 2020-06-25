@@ -1,3 +1,10 @@
+2.0.0-rc.2 / 2020-06-30
+==================
+
+  * add new method: `workerNodes.profiler` for CPU Profiling
+  * add new method: `workerNodes.takeSnapshot` for memory Heap Snapshot
+
+
 2.0.0-rc.1 / 2019-02-21
 ==================
 

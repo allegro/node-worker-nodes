@@ -27,6 +27,8 @@ $ npm install worker-nodes@next
     * [.call](#WorkerNodes+call) : <code>Proxy</code>
     * [.ready()](#WorkerNodes+ready) ⇒ <code>Promise</code>
     * [.terminate()](#WorkerNodes+terminate) ⇒ <code>Promise</code>
+    * [.profiler(?duration: Number)](#WorkerNodes+profiler) ⇒ <code>void</code>
+    * [.takeSnapshot()](#WorkerNodes+takeSnapshot) ⇒ <code>void</code>
 
 <a name="new_WorkerNodes_new"></a>
 
@@ -59,6 +61,16 @@ Starts the process of terminating this instance.
 
 **Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
 **Returns**: <code>Promise</code> - - resolved when the instance is terminated.  
+
+### workerNodes.profiler(?duration: Number) ⇒ <code>void</code>
+Pick worker, run CPU Profiler and save result on main process directory.
+
+**Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
+
+### workerNodes.takeSnapshot() ⇒ <code>void</code>
+Take Heap Snapshot and save result on main process directory
+
+**Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
 
 <a name="WorkerNodesOptions"></a>
 

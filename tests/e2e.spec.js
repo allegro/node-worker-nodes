@@ -1,3 +1,4 @@
+const fs = require('fs');
 const WorkerNodes = require('../');
 const errors = require('../lib/errors');
 
@@ -223,10 +224,10 @@ describe('worker nodes', function () {
         it('should only use workers that are fully initialized', async () => {
             // given
             const workerNodes = await givenStartedWorkerPoolWith('slow-module', {
-              autoStart: true,
-              minWorkers: 2,
-              maxWorkers: 2,
-              taskMaxRetries: Infinity
+                autoStart: true,
+                minWorkers: 2,
+                maxWorkers: 2,
+                taskMaxRetries: Infinity
             });
 
             await (4).times.call(workerNodes.call.getPid).and.waitForAllResults();
@@ -399,11 +400,11 @@ describe('worker nodes', function () {
 
             // given
             const workerNodes = await givenStartedWorkerPoolWith('async-tasks', {
-              autoStart: true,
-              minWorkers: 1,
-              maxWorkers: 1,
-              maxTasksPerWorker: 2,
-              taskTimeout: 250,
+                autoStart: true,
+                minWorkers: 1,
+                maxWorkers: 1,
+                maxTasksPerWorker: 2,
+                taskTimeout: 250,
             });
 
             // when
@@ -419,9 +420,9 @@ describe('worker nodes', function () {
         it('should result in the spawn of a new worker', async () => {
             // given
             const workerNodes = await givenStartedWorkerPoolWith('async-tasks', {
-              maxWorkers: 1,
-              maxTasksPerWorker: Infinity,
-              taskTimeout: 250,
+                maxWorkers: 1,
+                maxTasksPerWorker: Infinity,
+                taskTimeout: 250,
             });
 
             // when
@@ -671,4 +672,32 @@ describe('worker nodes', function () {
 
     });
 
+    describe('V8 profilers', () => {
+        it('should generate heap snapshot result file', async () => {
+            // given
+            const workerNodes = givenWorkerPoolWith('echo-function-async', { lazyStart: true });
+
+            // when
+            workerNodes.takeSnapshot();
+            await wait(1500);
+            
+            const result = fs.readdirSync(process.cwd()).find(name => name.includes('.heapsnapshot'));
+            result.should.exist;
+            fs.unlinkSync(result);
+        });
+
+
+        it('should generate heap profiler result file', async () => {
+            // given
+            const workerNodes = givenWorkerPoolWith('echo-function-async', { lazyStart: true });
+
+            // when
+            workerNodes.profiler(200);
+            await wait(500);
+
+            const result = fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile'));
+            result.should.exist;
+            fs.unlinkSync(result);
+        });
+    });
 });
