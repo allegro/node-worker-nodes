@@ -33,9 +33,9 @@
     "chai": "^3.5.0",
     "co-mocha": "^1.1.3",
     "is-running": "^2.1.0",
-    "jsdoc-to-markdown": "^2.0.1",
+    "jsdoc-to-markdown": "^6.0.1",
     "lodash.uniq": "^4.5.0",
-    "mocha": "^3.4.2",
+    "mocha": "^8.0.1",
     "sinon": "^1.17.6"
   },
   "dependencies": {
