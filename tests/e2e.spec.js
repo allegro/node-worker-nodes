@@ -567,12 +567,12 @@ describe('worker nodes', function () {
                 .that.has.property('message', 'cancel after 3 retries!');
         });
 
-        it('should catch thrown exceptions', async () => {
+        it('should catch thrown exceptions', function* () {
             // given
             const workerNodes = givenWorkerPoolWith('harmful-module', { maxWorkers: 1, taskMaxRetries: 0 });
 
             // when
-            const result = await workerNodes.call.throwsAlways().catch(error => error);
+            const result = yield workerNodes.call.throwsAlways().catch(error => error);
 
             // then
             result.should.be
