@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
 
     getPid: () => process.pid,

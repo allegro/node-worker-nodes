@@ -9,7 +9,7 @@
 ## Installation
 
 ```bash
-$ npm install worker-nodes@next
+$ npm install worker-nodes
 ```
 
   Node.js greater than 11.7.0 is *required*
