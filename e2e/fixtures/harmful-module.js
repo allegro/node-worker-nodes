@@ -1,3 +1,4 @@
+/* eslint-disable */
 const fs = require('fs');
 const tmpFile = __dirname + '/.tmp';
 
