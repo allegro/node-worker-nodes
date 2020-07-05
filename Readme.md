@@ -202,18 +202,19 @@ Example results:
 ```bash
 results for 100 executions
 
-name                 time: total [ms]  time usr [ms]  time sys [ms]  worker usr [ms]  worker sys [ms]  mem rss [MB]  worker rss [MB]  errors
-------------------   ----------------  -------------  -------------  ---------------  ---------------  ------------  ---------------  ------
-no-workers                        162            250             38                0                0           101                0       0
-worker-nodes@next                 458            573            186              571              185           210              207       0
-worker-nodes@1.6.1               1503            670            395              991              337           292               87       0
-workerpool@2.3.0                 1684           1511            688              292               82           155               49       0
-worker-farm@1.6.0                2508           1435            511             1247              368           104               59       0
-process-pool@0.3.4               2571           1537            517             1333              376           105               61       0
-worker-pool@3.0.2               15939          15984           5632             1946              546            86               79       0
+name                time: total [ms]  time usr [ms]  time sys [ms]  worker usr [ms]  worker sys [ms]  mem rss [MB]  worker rss [MB]  errors
+------------------  ----------------  -------------  -------------  ---------------  ---------------  ------------  ---------------  ------
+no-workers                       148            203             37                0                0            98                0       0
+worker-nodes@2.0.0               362            390            143              389              143           213              210       0
+workerpool@6.0.0                 367            495            185              492              182           236              245       0
+worker-nodes@1.6.1              1095            520            207              592              243           216               86       0
+worker-farm@1.7.0               1886            749            276              947              299           221               70       0
+process-pool@0.3.5              2002            847            285              986              309           219               74       0
+worker-pool@3.0.2              13775           7129           5236             1891              952           363               63       0
 
-os : Darwin / 17.5.0 / x64
-cpu : Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz × 8
+  os : Darwin / 19.5.0 / x64
+ cpu : Intel(R) Core(TM) i7-7660U CPU @ 2.50GHz × 4
+node : 14.3.0 / v8: 8.1.307.31-node.33
 ```
 
 ## See also
@@ -226,7 +227,7 @@ sources of inspiration:
 
 ## License
 
-Copyright 2016 Grupa Allegro Sp. z o.o.
+Copyright Allegro Sp. z o.o.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

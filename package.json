@@ -33,7 +33,7 @@
     "license": "Apache-2.0",
     "devDependencies": {
         "ava": "^3.9.0",
-        "eslint": "^7.3.1",
+        "eslint": "^7.4.0",
         "eslint-plugin-ava": "^10.3.1"
     },
     "types": "./index.d.ts",

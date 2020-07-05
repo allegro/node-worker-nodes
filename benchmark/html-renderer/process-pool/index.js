@@ -1,4 +1,4 @@
-const ProcessPool = require('process-pool');
+const ProcessPool = require('process-pool').default;
 
 const pool = new ProcessPool({ processLimit: 1 });
 const workerModulePath = require.resolve('./worker');
