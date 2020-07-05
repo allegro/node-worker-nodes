@@ -30,7 +30,7 @@
     "contributors": [
         "Krzysztof Kwiatkowski <kwiatkk1+npm@gmail.com>"
     ],
-    "license": "apache-2.0",
+    "license": "Apache-2.0",
     "devDependencies": {
         "ava": "^3.9.0",
         "eslint": "^7.3.1",
