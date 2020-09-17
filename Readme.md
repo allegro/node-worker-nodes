@@ -26,8 +26,9 @@ $ npm install worker-nodes
     * [.call](#WorkerNodes+call) : <code>Proxy</code>
     * [.ready()](#WorkerNodes+ready) ⇒ <code>Promise</code>
     * [.terminate()](#WorkerNodes+terminate) ⇒ <code>Promise</code>
-    * [.profiler(duration)](#WorkerNodes+profiler)
-    * [.takeSnapshot()](#WorkerNodes+takeSnapshot)
+    * [.profiler(duration)](#WorkerNodes+profiler) ⇒ <code>void</code>
+    * [.takeSnapshot()](#WorkerNodes+takeSnapshot) ⇒ <code>void</code>
+    * [.getUsedWorkers()](#WorkerNodes+getUsedWorkers) ⇒ <code>Array.&lt;Worker&gt;</code>
 
 <a name="new_WorkerNodes_new"></a>
 
@@ -62,7 +63,7 @@ Starts the process of terminating this instance.
 **Returns**: <code>Promise</code> - - resolved when the instance is terminated.  
 <a name="WorkerNodes+profiler"></a>
 
-### workerNodes.profiler(duration)
+### workerNodes.profiler(duration) ⇒ <code>void</code>
 Run CPU Profiler and save result on main process directory
 
 **Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
@@ -73,8 +74,14 @@ Run CPU Profiler and save result on main process directory
 
 <a name="WorkerNodes+takeSnapshot"></a>
 
-### workerNodes.takeSnapshot()
+### workerNodes.takeSnapshot() ⇒ <code>void</code>
 Take Heap Snapshot and save result on main process directory
+
+**Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
+<a name="WorkerNodes+getUsedWorkers"></a>
+
+### workerNodes.getUsedWorkers() ⇒ <code>Array.&lt;Worker&gt;</code>
+Return list with used workers in pool
 
 **Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
 

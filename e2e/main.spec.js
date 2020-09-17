@@ -3,6 +3,7 @@ const test = require('ava');
 const WorkerNodes = require('../');
 const errors = require('../lib/errors');
 const { fixture, unique, repeatCall } = require('./utils');
+const { Worker } = require('worker_threads');
 
 test('should be exposed as a constructor function', t => {
     t.throws(() => WorkerNodes(), { instanceOf: TypeError }, "cannot be invoked without 'new'")
@@ -100,4 +101,19 @@ test('should kill worker that got stuck in an infinite loop', async t => {
 
     // then
     await t.throwsAsync(workerNodes.call.infiniteLoop, { instanceOf: errors.TimeoutError });
+});
+
+test('should return used workers list', async t => {
+    // given
+    const workerNodes = new WorkerNodes(fixture('process-info'), {
+        autoStart: true,
+        maxWorkers: 10,
+        minWorkers: 10
+    });
+    await workerNodes.ready();
+
+    const workersList = workerNodes.getUsedWorkers();
+
+    // then
+    workersList.forEach(worker => t.true(worker instanceof Worker));
 });
