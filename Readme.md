@@ -95,6 +95,7 @@ Describes a WorkerNodes options.
 * [WorkerNodesOptions](#WorkerNodesOptions)
     * [.autoStart](#WorkerNodesOptions+autoStart) : <code>Boolean</code>
     * [.lazyStart](#WorkerNodesOptions+lazyStart) : <code>Boolean</code>
+    * [.asyncWorkerInitialization](#WorkerNodesOptions+asyncWorkerInitialization) : <code>Boolean</code>
     * [.minWorkers](#WorkerNodesOptions+minWorkers) : <code>Number</code>
     * [.maxWorkers](#WorkerNodesOptions+maxWorkers) : <code>Number</code>
     * [.maxTasks](#WorkerNodesOptions+maxTasks) : <code>Number</code>
@@ -118,6 +119,15 @@ If true, depending on the [lazyStart](#WorkerNodesOptions+lazyStart) option, it 
 
 ### options.lazyStart : <code>Boolean</code>
 Whether should start a new worker only if all the others are busy.
+
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
+**Default**: <code>false</code>  
+<a name="WorkerNodesOptions+asyncWorkerInitialization"></a>
+
+### options.asyncWorkerInitialization : <code>Boolean</code>
+Enables async initialization of worker.
+To start handling task over worker, need to invoke `sendWorkerMessage('ready')` function when it fully initialized.
+For examples please refer to [the test cases](https://github.com/allegro/node-worker-nodes/blob/master/e2e/async-initialization.spec.js)
 
 **Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>false</code>  
@@ -199,7 +209,7 @@ const myModuleWorkerNodes = new WorkerNodes('/home/joe.doe/workspace/my-module')
 myModuleWorkerNodes.call().then(msg => console.log(msg));  // -> 'hello from separate process!'
 ```
 
-For more advanced examples please refer to [the test cases](https://github.com/allegro/node-worker-nodes/blob/master/tests/e2e.spec.js).
+For more advanced examples please refer to [the test cases](https://github.com/allegro/node-worker-nodes/tree/master/e2e).
 
 
 ## Running tests
