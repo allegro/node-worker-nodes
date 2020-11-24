@@ -1,6 +1,7 @@
 interface Options {
   autoStart?: boolean;
   lazyStart?: boolean;
+  asyncWorkerInitialization?: boolean;
   minWorkers?: number;
   maxWorkers?: number;
   maxTasks?: number;
@@ -17,6 +18,7 @@ interface WorkerNodesInstance {
   terminate: () => Promise<WorkerNodesInstance>;
   profiler: (duration?: number) => void;
   takeSnapshot: () => void;
+  getUsedWorkers: () => Array<Worker>;
 }
 
 interface CallProperty {

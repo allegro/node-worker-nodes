@@ -49,7 +49,7 @@ test('should result with rejection of all the calls that the worker was processi
     // when
     
     const failingCall = workerNodes.call.task500ms().catch(error => error);
-    await wait(150);
+    await wait(200);
 
     const secondCall = workerNodes.call.task100ms().catch(error => error);
     const results = await Promise.all([failingCall, secondCall]);
