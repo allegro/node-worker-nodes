@@ -29,6 +29,7 @@ test('should generate heap profiler result file', async (t) => {
     await wait(500);
 
     const result = fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile'));
-    t.truthy(result, result);
+
+    t.truthy(result);
     fs.unlinkSync(result);
 });
