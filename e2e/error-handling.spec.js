@@ -19,7 +19,7 @@ test('should contain proper call stack', async t => {
     const error = await t.throwsAsync(workerNodes.call.typeError);
 
     // then
-    t.regex(error.stack, new RegExp('e2e/fixtures/messy-module.js', 'g'));
+    t.regex(error.stack, new RegExp('e2e[/\\\\]+fixtures[/\\\\]+messy-module.js', 'g'));
 });
 
 test('should be propagated with error type info retained', async t => {
