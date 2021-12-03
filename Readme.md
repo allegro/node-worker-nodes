@@ -104,6 +104,7 @@ Describes a WorkerNodes options.
     * [.taskMaxRetries](#WorkerNodesOptions+taskMaxRetries) : <code>Number</code>
     * [.workerEndurance](#WorkerNodesOptions+workerEndurance) : <code>Number</code>
     * [.workerStopTimeout](#WorkerNodesOptions+workerStopTimeout) : <code>Number</code>
+    * [.resourceLimits](#WorkerNodesOptions+resourceLimits) : <code>Object</code>
 
 <a name="WorkerNodesOptions+autoStart"></a>
 
@@ -191,6 +192,21 @@ The timeout value (in milliseconds) for the worker to stop before sending SIGKIL
 
 **Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Default**: <code>100</code>  
+<a name="WorkerNodesOptions+resourceLimits"></a>
+
+### options.resourceLimits : <code>Object</code>
+Provides the set of JS engine resource constraints inside this Worker thread.
+
+**Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| maxYoungGenerationSizeMb | <code>Number</code> | The maximum size of a heap space for recently created objects |
+| maxOldGenerationSizeMb | <code>Number</code> | The maximum size of the main heap in MB |
+| codeRangeSizeMb | <code>Number</code> | The size of a pre-allocated memory range used for generated code |
+| stackSizeMb | <code>Number</code> | The default maximum stack size for the thread. Small values may lead to unusable Worker instances |
+
 
 ## Example
 
