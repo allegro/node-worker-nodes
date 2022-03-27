@@ -9,7 +9,7 @@
   "devDependencies": {
     "bluebird": "^3.7.2",
     "easy-table": "^1.1.1",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "text-table": "^0.2.0"
   },
   "scripts": {
