@@ -28,11 +28,16 @@ test('should kill the worker that was involved in processing the task', async t 
     await workerNodes.ready();
 
     // when
-    await t.throwsAsync(workerNodes.call.task500ms, { instanceOf: errors.TimeoutError });
+    let executingWorkerId;
+    await t.throwsAsync(async () => {
+        const p = workerNodes.call.task500ms();
+        workerNodes.workersQueue.storage.forEach(worker => executingWorkerId = worker.id);
+        await p;
+    }, { instanceOf: errors.TimeoutError });
     await wait(200);
 
     // then
-    t.is(workerNodes.workersQueue.storage.length, 0);
+    t.is(workerNodes.workersQueue.storage.filter(worker => worker.id === executingWorkerId).length, 0);
 });
 
 test('should result with rejection of all the calls that the worker was processing at the moment', async t => {
