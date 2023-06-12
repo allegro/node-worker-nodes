@@ -25,3 +25,16 @@ test('should spawn new workers when old workers exit even if no items in the que
     const operationWorkersCountAfter = workerNodes.workersQueue.filter((worker) => worker.isOperational()).length;
     t.is(operationWorkersCountAfter, maxWorkers);
 });
+
+
+test('should shutdown fine', async (t) => {
+    // given
+    const maxWorkers = 4;
+    const minWorkers = 2;
+    const workerNodes = new WorkerNodes(fixture('process-info'), { maxWorkers, minWorkers, workerEndurance: 1, autoStart: true });
+
+    await workerNodes.ready();
+    await t.notThrowsAsync(() => workerNodes.terminate());
+    await wait(200);
+    t.is(workerNodes.workersQueue.filter((worker) => worker.isProcessAlive).length, 0);
+});
