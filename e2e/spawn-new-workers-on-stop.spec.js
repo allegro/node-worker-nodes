@@ -1,7 +1,7 @@
 const test = require('ava');
 
 const WorkerNodes = require('..');
-const { fixture, repeatCall, wait } = require('./utils');
+const { fixture, repeatCall, wait, eventually } = require('./utils');
 
 
 test('should spawn new workers when old workers exit even if no items in the queue', async (t) => {
@@ -19,11 +19,13 @@ test('should spawn new workers when old workers exit even if no items in the que
     await repeatCall(workerNodes.call.noop, maxWorkers);
     t.is(workerNodes.workersQueue.filter((worker) => worker.isOperational()).length, 0);
 
-    await wait(200);
+
+    const getOperationalWorkersCount = () => workerNodes.workersQueue.filter((worker) => worker.isOperational()).length;
 
     // then
-    const operationWorkersCountAfter = workerNodes.workersQueue.filter((worker) => worker.isOperational()).length;
-    t.is(operationWorkersCountAfter, maxWorkers);
+    // we're waiting to all workers to be operational, the time for that might variate greatly between machines (Developer machine vs CI machine)
+    await eventually(() => getOperationalWorkersCount() === maxWorkers);
+    t.is(getOperationalWorkersCount(), maxWorkers);
 });
 
 
