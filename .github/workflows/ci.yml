@@ -5,9 +5,11 @@ name: worker-nodes CI
 
 on:
   push:
-    branches: [ master, next ]
+    branches: [ master ]
+    tags-ignore:
+      - 'v*'
   pull_request:
-    branches: [ master, next ]
+    branches: [ master ]
 
 jobs:
   build:
