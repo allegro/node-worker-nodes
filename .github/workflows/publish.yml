@@ -11,8 +11,11 @@ jobs:
         with:
           node-version: latest
           registry-url: 'https://registry.npmjs.org'
+          cache: npm
       - run: npm ci
       - run: npm test
+      - name: Get latest tag and update version in package.json file
+        run: npm version $(git tag | sort -r --version-sort | head -n1 | cut -c2-) -no-git-tag-version -f
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
