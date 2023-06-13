@@ -1,5 +1,5 @@
 [![view on npm](https://img.shields.io/npm/v/worker-nodes.svg)](https://www.npmjs.org/package/worker-nodes)
-[![Build Status](https://travis-ci.org/allegro/node-worker-nodes.svg?branch=master)](https://travis-ci.org/allegro/node-worker-nodes)
+[![Build status](https://github.com/allegro/node-worker-nodes/actions/workflows/ci.yml/badge.svg)](https://github.com/allegro/node-worker-nodes/actions/workflows/ci.yml)
 
 # worker-nodes
 
@@ -12,7 +12,7 @@
 $ npm install worker-nodes
 ```
 
-  Node.js greater than 11.7.0 is *required*
+  Node.js greater than 14.0.0 is *required*
 
 # API Reference
 
@@ -225,7 +225,7 @@ const myModuleWorkerNodes = new WorkerNodes('/home/joe.doe/workspace/my-module')
 myModuleWorkerNodes.call().then(msg => console.log(msg));  // -> 'hello from separate process!'
 ```
 
-For more advanced examples please refer to [the test cases](https://github.com/allegro/node-worker-nodes/tree/master/e2e).
+For more advanced examples please refer to [the test cases](https://github.com/allegro/node-worker-nodes/tree/main/e2e).
 
 
 ## Running tests
