@@ -1,7 +1,7 @@
 const test = require('ava');
 
 const WorkerNodes = require('..');
-const { fixture, repeatCall, wait, eventually } = require('./utils');
+const { fixture, repeatCall, eventually } = require('./utils');
 
 
 test('should spawn new workers when old workers exit even if no items in the queue', async (t) => {
@@ -37,6 +37,9 @@ test('should shutdown fine', async (t) => {
 
     await workerNodes.ready();
     await t.notThrowsAsync(() => workerNodes.terminate());
-    await wait(200);
-    t.is(workerNodes.workersQueue.filter((worker) => worker.isProcessAlive).length, 0);
+    
+    const getAliveWorkersCount = () => workerNodes.workersQueue.filter((worker) => worker.isProcessAlive).length;
+
+    await eventually(() => getAliveWorkersCount() === 0);
+    t.is(getAliveWorkersCount(), 0);
 });
