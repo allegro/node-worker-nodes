@@ -21,7 +21,7 @@
     },
     "scripts": {
         "docs": "npx jsdoc-to-markdown -t docs-src/README.hbs lib/*.js > README.md",
-        "test": "eslint ./ && ava -c 2",
+        "test": "eslint ./ && ava -c 1",
         "test:watch": "ava --watch",
         "lint": "eslint ./ --fix",
         "benchmark": "cd benchmark; npm install; npm test;"
