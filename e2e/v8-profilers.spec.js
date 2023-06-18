@@ -2,39 +2,48 @@ const test = require('ava');
 const fs = require('fs');
 
 const WorkerNodes = require('../');
-const { fixture, wait } = require('./utils');
+const { fixture, eventually } = require('./utils');
 
-test('should generate heap snapshot result file', async (t) => {
-    // given
-    const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true });
-    await workerNodes.ready();
-    await workerNodes.call('hello!');
+for (const workerType of ["process"]) {
+    test(`should generate heap snapshot result file workerType: ${workerType}`, async (t) => {
+        // given
+        const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true, workerType });
+        await workerNodes.ready();
+        await workerNodes.call('hello!');
 
-    // when
-    workerNodes.takeSnapshot();
-    await wait(1500);
+        // when
+        workerNodes.takeSnapshot();
+        const getHeapSnapshotFilename = workerType === "thread" ?
+            () => fs.readdirSync(process.cwd()).find(name => name.includes('.heapsnapshot') && name.includes(`-${process.pid}-`)) :
+            () => fs.readdirSync(process.cwd()).find(name => name.includes('.heapsnapshot') && !name.includes(`-${process.pid}-`));
+        await eventually(() => getHeapSnapshotFilename());
 
-    const result = fs.readdirSync(process.cwd()).find(name => name.includes('.heapsnapshot'));
-    t.truthy(result);
-    t.true(result.length > 0)
-    fs.unlinkSync(result);
-});
+        const result = getHeapSnapshotFilename();
+        t.truthy(result);
+        t.true(result.length > 0)
+        fs.unlinkSync(result);
+    });
 
-test('should generate heap profiler result file', async (t) => {
-    // given
-    const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true });
-    await workerNodes.ready();
+    test(`should generate heap profiler result file workerType: ${workerType}`, async (t) => {
+        // given
+        const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true, workerType });
+        await workerNodes.ready();
 
-    // when
-    workerNodes.profiler(200);
+        // when
+        workerNodes.profiler(200);
 
-    await workerNodes.call('hello!');
+        await workerNodes.call('hello!');
 
-    await wait(500);
+        const getCpuProfileFilename = workerType === "thread" ? 
+            () => fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile') && name.includes(`-${process.pid}-`)) : 
+            () => fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile') && !name.includes(`-${process.pid}-`));
 
-    const result = fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile'));
+        await eventually(() => getCpuProfileFilename());
 
-    t.truthy(result);
-    t.true(result.length > 0)
-    fs.unlinkSync(result);
-});
+        const result = getCpuProfileFilename();
+
+        t.truthy(result);
+        t.true(result.length > 0)
+        fs.unlinkSync(result);
+    });
+}

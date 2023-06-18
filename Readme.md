@@ -105,6 +105,7 @@ Describes a WorkerNodes options.
     * [.workerEndurance](#WorkerNodesOptions+workerEndurance) : <code>Number</code>
     * [.workerStopTimeout](#WorkerNodesOptions+workerStopTimeout) : <code>Number</code>
     * [.resourceLimits](#WorkerNodesOptions+resourceLimits) : <code>Object</code>
+    * [.workerType](#WorkerNodesOptions+workerType) : <code>string</code>
 
 <a name="WorkerNodesOptions+autoStart"></a>
 
@@ -195,7 +196,7 @@ The timeout value (in milliseconds) for the worker to stop before sending SIGKIL
 <a name="WorkerNodesOptions+resourceLimits"></a>
 
 ### options.resourceLimits : <code>Object</code>
-Provides the set of JS engine resource constraints inside this Worker thread.
+Provides the set of JS engine resource constraints inside this Worker thread. (Usable when using `workerType: thread` only)
 
 **Kind**: instance property of [<code>WorkerNodesOptions</code>](#WorkerNodesOptions)  
 **Properties**
@@ -207,6 +208,10 @@ Provides the set of JS engine resource constraints inside this Worker thread.
 | codeRangeSizeMb | <code>Number</code> | The size of a pre-allocated memory range used for generated code |
 | stackSizeMb | <code>Number</code> | The default maximum stack size for the thread. Small values may lead to unusable Worker instances |
 
+### options.workerType : <code>string</code>
+Can be either `process` or `thread` (default), that controls the underlying implementation used, either `child_process` or `worker_threads`.
+Most usecases are perfectly fine with `thread` implementation, some work loads though, might need to use `process`, for example, if you are using
+`process.chdir()` call which is [not supported](https://github.com/nodejs/node/issues/41673) in `worker_threads`.
 
 ## Example
 
