@@ -1,7 +1,7 @@
 const test = require('ava');
 
 const WorkerNodes = require('../');
-const { fixture, unique, repeatCall } = require('./utils');
+const { fixture, unique, repeatCall, wait } = require('./utils');
 
 for (const workerType of ["thread", "process"]) {
     test(`should be disabled by default workerType: ${workerType}`, async t => {
@@ -24,14 +24,12 @@ for (const workerType of ["thread", "process"]) {
 
     test(`should result in spawn of the workers before the first call if active workerType: ${workerType}`, async t => {
         // given
-        const workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, maxWorkers: 1, workerType });
+        const workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, minWorkers: 1, maxWorkers: 1, workerType });
         await workerNodes.ready();
 
         // when
         const callTime = Date.now();
         const workerStartTime = await workerNodes.call.getStartTime();
-
-        console.log(`workerStartTime: ${workerStartTime} callTime: ${callTime}`);
 
         // then
         t.true(workerStartTime <= callTime);
