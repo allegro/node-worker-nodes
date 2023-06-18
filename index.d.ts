@@ -10,6 +10,7 @@ interface Options {
   taskMaxRetries?: number;
   workerEndurance?: number;
   workerStopTimeout?: number;
+  workerType?: string;
 }
 
 interface WorkerNodesInstance {
