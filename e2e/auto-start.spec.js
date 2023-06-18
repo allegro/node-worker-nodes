@@ -1,7 +1,7 @@
 const test = require('ava');
 
 const WorkerNodes = require('../');
-const { fixture, unique, repeatCall, wait } = require('./utils');
+const { fixture, unique, repeatCall } = require('./utils');
 
 for (const workerType of ["thread", "process"]) {
     test(`should be disabled by default workerType: ${workerType}`, async t => {
