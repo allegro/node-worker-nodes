@@ -1,7 +1,7 @@
 const test = require('ava');
 
 const WorkerNodes = require('../');
-const { fixture, unique, repeatCall } = require('./utils');
+const { fixture, unique, repeatCall, eventually } = require('./utils');
 
 module.exports = function describe(workerType) {
     test(`should be disabled by default`, async (t) => {
@@ -32,7 +32,9 @@ module.exports = function describe(workerType) {
 
         // when
         const callResults = await repeatCall(workerNodes.call.task100ms, 4);
-        const results = workerNodes.workersQueue.map(worker => worker.process.startDate).sort((a, b) => a.getTime() - b.getTime());
+        const getWorkersStartupTimes = () => workerNodes.workersQueue.map(worker => worker.process.startDate).sort((a, b) => a.getTime() - b.getTime());
+        await eventually(() => getWorkersStartupTimes().every(time => time !== undefined));
+        const results = getWorkersStartupTimes();
 
         console.log(`results ${workerType} callStartTime: ${callStartTime.toISOString()}`, results, 'callResults', callResults);
 
