@@ -31,12 +31,13 @@ module.exports = function describe(workerType) {
         const callStartTime = new Date();
 
         // when
-        await repeatCall(workerNodes.call.task100ms, 4);
+        const callResults = await repeatCall(workerNodes.call.task100ms, 4);
         const results = workerNodes.workersQueue.map(worker => worker.process.startDate).sort((a, b) => a.getTime() - b.getTime());
 
-        console.log(`results ${workerType} callStartTime: ${callStartTime}`, results);
+        console.log(`results ${workerType} callStartTime: ${callStartTime.toISOString()}`, results, 'callResults', callResults);
 
         // then
+        callResults.forEach(callResult => t.true(callResult));
         t.is(results.length, 4);
         results.slice(0, 2).forEach(result => t.true(result <= callStartTime));
         results.slice(2, 4).forEach(result => t.true(result >= callStartTime));
