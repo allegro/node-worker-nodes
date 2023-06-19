@@ -32,9 +32,9 @@ module.exports = function describe(workerType) {
 
         // when
         await repeatCall(workerNodes.call.task100ms, 4);
-        const results = workerNodes.workersQueue.map(worker => worker.process.startDate);
+        const results = workerNodes.workersQueue.map(worker => worker.process.startDate).sort((a, b) => a.getTime() - b.getTime());
 
-        console.log(`results`, results);
+        console.log(`results ${workerType} callStartTime: ${callStartTime}`, results);
 
         // then
         t.is(results.length, 4);
