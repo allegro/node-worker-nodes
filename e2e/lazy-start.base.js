@@ -34,6 +34,8 @@ module.exports = function describe(workerType) {
         await repeatCall(workerNodes.call.task100ms, 4);
         const results = workerNodes.workersQueue.map(worker => worker.process.startDate);
 
+        console.log(`results`, results);
+
         // then
         t.is(results.length, 4);
         results.slice(0, 2).forEach(result => t.true(result <= callStartTime));
