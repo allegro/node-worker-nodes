@@ -20,7 +20,7 @@ for (const workerType of ["thread", "process"]) {
 
     test(`should cause only the minimum required number of workers to start at init workerType: ${workerType}`, async (t) => {
         // given
-        const workerNodes = new WorkerNodes(fixture('process-info'), {
+        const workerNodes = new WorkerNodes(fixture('async-tasks'), {
             autoStart: true,
             lazyStart: true,
             minWorkers: 2,
@@ -31,7 +31,7 @@ for (const workerType of ["thread", "process"]) {
         const callStartTime = new Date();
 
         // when
-        await repeatCall(workerNodes.call.noop, 4);
+        await repeatCall(workerNodes.call.task100ms, 4);
         const results = workerNodes.workersQueue.map(worker => worker.process.startDate);
 
         // then
