@@ -1,7 +1,7 @@
 const test = require('ava');
 
 const WorkerNodes = require('../');
-const { fixture, unique, repeatCall } = require('./utils');
+const { fixture, unique, repeatCall, eventually } = require('./utils');
 
 for (const workerType of ["thread", "process"]) {
     test(`should be disabled by default workerType: ${workerType}`, async t => {
@@ -67,9 +67,10 @@ for (const workerType of ["thread", "process"]) {
         workerNodes.workersQueue.storage[0].process.exit();
         await repeatCall(workerNodes.call.getPid, 4);
 
-        const results = workerNodes.workersQueue.filter(worker => worker.isProcessAlive);
-
         // then
-        t.is(unique(results).length, 1);
+        // we wait for all workers to come back a live
+        const getLiveWorkers = () => workerNodes.workersQueue.filter(worker => worker.isProcessAlive);
+        await eventually(() => unique(getLiveWorkers()).length === 2);
+        t.is(unique(getLiveWorkers()).length, 2);
     });
 }
