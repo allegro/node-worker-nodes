@@ -3,8 +3,8 @@ const test = require('ava');
 const WorkerNodes = require('../');
 const { fixture, unique, repeatCall } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should be disabled by default workerType: ${workerType}`, async (t) => {
+module.exports = function describe(workerType) {
+    test(`should be disabled by default`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, minWorkers: 2, maxWorkers: 4, workerType });
         await workerNodes.ready();
@@ -18,7 +18,7 @@ for (const workerType of ["thread", "process"]) {
         results.forEach(result => t.true(result <= callStartTime));
     });
 
-    test(`should cause only the minimum required number of workers to start at init workerType: ${workerType}`, async (t) => {
+    test(`should cause only the minimum required number of workers to start at init`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('async-tasks'), {
             autoStart: true,
@@ -40,7 +40,7 @@ for (const workerType of ["thread", "process"]) {
         results.slice(2, 4).forEach(result => t.true(result >= callStartTime));
     });
 
-    test(`should not affect work assignment to the workers by default workerType: ${workerType}`, async (t) => {
+    test(`should not affect work assignment to the workers by default`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), {
             autoStart: true,
@@ -60,7 +60,7 @@ for (const workerType of ["thread", "process"]) {
         t.deepEqual(result, [1, 1, 1]);
     });
 
-    test(`should cause maximum utilization of the existing workers if calls are sequential workerType: ${workerType}`, async (t) => {
+    test(`should cause maximum utilization of the existing workers if calls are sequential`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), {
             lazyStart: true,
@@ -78,7 +78,7 @@ for (const workerType of ["thread", "process"]) {
         t.is(unique([results1, results2, results3]).length, 1);
     });
 
-    test(`should spawn max number of workers to handle the concurrent calls workerType: ${workerType}`, async (t) => {
+    test(`should spawn max number of workers to handle the concurrent calls`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), {
             lazyStart: true,

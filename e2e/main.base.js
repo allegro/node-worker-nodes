@@ -6,12 +6,12 @@ const { fixture, unique, repeatCall } = require('./utils');
 const { Worker } = require('worker_threads');
 const { ChildProcess } = require('child_process');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should be exposed as a constructor function workerType: ${workerType}`, t => {
+module.exports = function describe(workerType) {
+    test(`should be exposed as a constructor function`, t => {
         t.throws(() => WorkerNodes(), { instanceOf: TypeError }, "cannot be invoked without 'new'")
     });
 
-    test(`should report its readiness workerType: ${workerType}`, async t => {
+    test(`should report its readiness`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), { workerType });
 
@@ -22,7 +22,7 @@ for (const workerType of ["thread", "process"]) {
         t.truthy(ready);
     });
 
-    test(`should allow to load a module that has dependencies workerType: ${workerType}`, async t => {
+    test(`should allow to load a module that has dependencies`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('echo-module-with-imports'), { workerType });
 
@@ -33,7 +33,7 @@ for (const workerType of ["thread", "process"]) {
         t.is(result, 'hello!');
     });
 
-    test(`should ${workerType === "process" ? "NOT " : ""}use the same process as the caller does based on workerType: ${workerType}`, async t => {
+    test(`should ${workerType === "process" ? "NOT " : ""}use the same process as the caller does based on`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), { workerType });
     
@@ -87,7 +87,7 @@ for (const workerType of ["thread", "process"]) {
         workerNodes.workersQueue.forEach(worker => t.is(worker.tasksStarted, 1));
     });
 
-    test(`should reject calls that exceeds given limit workerType: ${workerType}`, async t => {
+    test(`should reject calls that exceeds given limit`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('async-tasks'), {
             autoStart: true,
@@ -103,7 +103,7 @@ for (const workerType of ["thread", "process"]) {
         await t.throwsAsync(() => repeatCall(workerNodes.call.task100ms, 10), { instanceOf: errors.MaxConcurrentCallsError });
     });
 
-    test(`should kill worker that got stuck in an infinite loop workerType: ${workerType}`, async t => {
+    test(`should kill worker that got stuck in an infinite loop`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('harmful-module'), { taskTimeout: 500, maxWorkers: 1, workerType });
 
@@ -117,7 +117,7 @@ for (const workerType of ["thread", "process"]) {
         await t.not(idBefore, idAfter);
     });
 
-    test(`should return used workers list workerType: ${workerType}`, async t => {
+    test(`should return used workers list`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), {
             autoStart: true,

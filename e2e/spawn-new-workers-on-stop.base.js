@@ -3,8 +3,8 @@ const test = require('ava');
 const WorkerNodes = require('..');
 const { fixture, repeatCall, eventually } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should spawn new workers when old workers exit even if no items in the queue workerType: ${workerType}`, async (t) => {
+module.exports = function describe(workerType) {
+    test(`should spawn new workers when old workers exit even if no items in the queue`, async (t) => {
         // given
         const getOperationalWorkersCount = () => workerNodes.workersQueue.filter((worker) => worker.isOperational()).length;
         const maxWorkers = 4;
@@ -32,7 +32,7 @@ for (const workerType of ["thread", "process"]) {
     });
 
 
-    test(`should shutdown fine workerType: ${workerType}`, async (t) => {
+    test(`should shutdown fine`, async (t) => {
         // given
         const maxWorkers = 4;
         const minWorkers = 2;

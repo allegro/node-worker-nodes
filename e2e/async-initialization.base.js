@@ -3,8 +3,8 @@ const test = require('ava');
 const WorkerNodes = require('../');
 const { fixture } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should not mark worker as ready until module fully initialized workerType: ${workerType}`, t => {
+module.exports = function describe(workerType) {
+    test(`should not mark worker as ready until module fully initialized`, t => {
         // given
         const workerNodes = new WorkerNodes(fixture('async-initialization'), {
             maxWorkers: 1,
@@ -17,7 +17,7 @@ for (const workerType of ["thread", "process"]) {
         t.falsy(workerNodes.pickWorker());
     });
     
-    test(`should correctly handle task after initialization workerType: ${workerType}`, async t => {
+    test(`should correctly handle task after initialization`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('async-initialization'), {
             maxWorkers: 1,

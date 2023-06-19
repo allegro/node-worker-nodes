@@ -4,8 +4,8 @@ const fs = require('fs');
 const WorkerNodes = require('../');
 const { fixture, eventually } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should generate heap snapshot result file workerType: ${workerType}`, async (t) => {
+module.exports = function describe(workerType) {
+    test(`should generate heap snapshot result file`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true, workerType });
         await workerNodes.ready();
@@ -24,7 +24,7 @@ for (const workerType of ["thread", "process"]) {
         fs.unlinkSync(result);
     });
 
-    test(`should generate heap profiler result file workerType: ${workerType}`, async (t) => {
+    test(`should generate heap profiler result file`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true, workerType });
         await workerNodes.ready();

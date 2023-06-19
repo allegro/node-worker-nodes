@@ -3,8 +3,8 @@ const test = require('ava');
 const WorkerNodes = require('../');
 const { fixture } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should be propagated to a caller workerType: ${workerType}`, async t => {
+module.exports = function describe(workerType) {
+    test(`should be propagated to a caller`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('messy-module'), { workerType });
 
@@ -12,7 +12,7 @@ for (const workerType of ["thread", "process"]) {
         await t.throwsAsync(workerNodes.call.typeError, { instanceOf: Error });
     });
 
-    test(`should contain proper call stack workerType: ${workerType}`, async t => {
+    test(`should contain proper call stack`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('messy-module'));
 
@@ -23,7 +23,7 @@ for (const workerType of ["thread", "process"]) {
         t.regex(error.stack, new RegExp('e2e[/\\\\]+fixtures[/\\\\]+messy-module.js', 'g'));
     });
 
-    test(`should be propagated with error type info retained workerType: ${workerType}`, async t => {
+    test(`should be propagated with error type info retained`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('messy-module'), { workerType });
 
@@ -32,7 +32,7 @@ for (const workerType of ["thread", "process"]) {
         await t.throwsAsync(workerNodes.call.referenceError, { instanceOf: ReferenceError });
     });
 
-    test(`should be propagated with all the custom error fields that they have workerType: ${workerType}`, async (t) => {
+    test(`should be propagated with all the custom error fields that they have`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('messy-module'), { workerType });
 
@@ -44,7 +44,7 @@ for (const workerType of ["thread", "process"]) {
         t.like(resultFoo, { foo: 1, bar: 2 });
     });
 
-    test(`should be wrapped in an Error object if they were promise rejections workerType: ${workerType}`, async (t) => {
+    test(`should be wrapped in an Error object if they were promise rejections`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('messy-module'), { workerType });
 
@@ -56,7 +56,7 @@ for (const workerType of ["thread", "process"]) {
         t.like(resultFoo, { reason: 'rejection reason' });
     });
 
-    test(`should not result in the spawn of a new worker workerType: ${workerType}`, async (t) => {
+    test(`should not result in the spawn of a new worker`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('messy-module'), { maxWorkers: 1, workerType });
 

@@ -3,8 +3,8 @@ const test = require('ava');
 const WorkerNodes = require('../');
 const { fixture, repeatCall } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should be limited to one by default workerType: ${workerType}`, async (t) => {
+module.exports = function describe(workerType) {
+    test(`should be limited to one by default`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('async-tasks'), { maxWorkers: 1, workerType });
         await workerNodes.ready();
@@ -18,7 +18,7 @@ for (const workerType of ["thread", "process"]) {
         t.true(totalDuration >= 1000);
     });
 
-    test(`should allow to limit the amount of concurrent calls sent to a single worker workerType: ${workerType}`, async (t) => {
+    test(`should allow to limit the amount of concurrent calls sent to a single worker`, async (t) => {
         const workerNodes = new WorkerNodes(fixture('async-tasks'), { maxWorkers: 1, maxTasksPerWorker: 5 });
         await workerNodes.ready();
         const startTime = Date.now();

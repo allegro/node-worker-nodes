@@ -3,8 +3,8 @@ const test = require('ava');
 const WorkerNodes = require('../');
 const { fixture, unique, repeatCall, eventually } = require('./utils');
 
-for (const workerType of ["thread", "process"]) {
-    test(`should be disabled by default workerType: ${workerType}`, async t => {
+module.exports = function describe(workerType) {
+    test(`should be disabled by default`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), { workerType });
 
@@ -22,7 +22,7 @@ for (const workerType of ["thread", "process"]) {
         });
     });
 
-    test(`should result in spawn of the workers before the first call if active workerType: ${workerType}`, async t => {
+    test(`should result in spawn of the workers before the first call if active`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, minWorkers: 1, maxWorkers: 1, workerType });
         await workerNodes.ready();
@@ -35,7 +35,7 @@ for (const workerType of ["thread", "process"]) {
         t.true(workerStartTime <= callTime);
     });
 
-    test(`should force the workerNodes to wait for all the required workers to start before reporting ready workerType: ${workerType}`, async t => {
+    test(`should force the workerNodes to wait for all the required workers to start before reporting ready`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), { autoStart: true, minWorkers: 4, maxWorkers: 4, workerType });
         await workerNodes.ready();
@@ -50,7 +50,7 @@ for (const workerType of ["thread", "process"]) {
         results.forEach(result => t.true(result <= callStartTime));
     });
 
-    test(`should only use workers that are fully initialized workerType: ${workerType}`, async t => {
+    test(`should only use workers that are fully initialized`, async t => {
         // given
         const workerNodes = new WorkerNodes(fixture('slow-module'), {
             autoStart: true,
