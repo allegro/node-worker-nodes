@@ -36,8 +36,6 @@ module.exports = function describe(workerType) {
         await eventually(() => getWorkersStartupTimes().every(time => time !== undefined));
         const results = getWorkersStartupTimes();
 
-        console.log(`results ${workerType} callStartTime: ${callStartTime.toISOString()}`, results, 'callResults', callResults);
-
         // then
         callResults.forEach(callResult => t.true(callResult));
         t.is(results.length, 4);
