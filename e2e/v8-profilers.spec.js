@@ -4,7 +4,7 @@ const fs = require('fs');
 const WorkerNodes = require('../');
 const { fixture, eventually } = require('./utils');
 
-for (const workerType of ["process"]) {
+for (const workerType of ["thread", "process"]) {
     test(`should generate heap snapshot result file workerType: ${workerType}`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('echo-function-async'), { lazyStart: true, workerType });
@@ -16,7 +16,7 @@ for (const workerType of ["process"]) {
         const getHeapSnapshotFilename = workerType === "thread" ?
             () => fs.readdirSync(process.cwd()).find(name => name.includes('.heapsnapshot') && name.includes(`-${process.pid}-`)) :
             () => fs.readdirSync(process.cwd()).find(name => name.includes('.heapsnapshot') && !name.includes(`-${process.pid}-`));
-        await eventually(() => getHeapSnapshotFilename());
+        await eventually(() => getHeapSnapshotFilename() !== undefined);
 
         const result = getHeapSnapshotFilename();
         t.truthy(result);
@@ -38,7 +38,7 @@ for (const workerType of ["process"]) {
             () => fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile') && name.includes(`-${process.pid}-`)) : 
             () => fs.readdirSync(process.cwd()).find(name => name.includes('.cpuprofile') && !name.includes(`-${process.pid}-`));
 
-        await eventually(() => getCpuProfileFilename());
+        await eventually(() => getCpuProfileFilename() !== undefined);
 
         const result = getCpuProfileFilename();
 
