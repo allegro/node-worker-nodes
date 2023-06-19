@@ -41,5 +41,8 @@
     "types": "./index.d.ts",
     "dependencies": {
         "msgpack-lite": "^0.1.26"
+    },
+    "ava": {
+        "workerThreads": false
     }
 }
