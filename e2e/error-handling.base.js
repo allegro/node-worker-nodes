@@ -61,9 +61,9 @@ module.exports = function describe(workerType) {
         const workerNodes = new WorkerNodes(fixture('messy-module'), { maxWorkers: 1, workerType });
 
         // when
-        const pidBefore = await workerNodes.call.getPid();
+        const pidBefore = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
         await workerNodes.call.typeError().catch(error => error);
-        const pidAfter = await workerNodes.call.getPid();
+        const pidAfter = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
 
         // then
         t.is(pidBefore, pidAfter);
