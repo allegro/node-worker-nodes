@@ -1,3 +1,3 @@
-const testBase = require('./function-proxying.base');
+const testBase = require("./function-proxying.base");
 
-    testBase("process");
+testBase("process");

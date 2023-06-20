@@ -1,3 +1,3 @@
-const testBase = require('./raw-data.base');
+const testBase = require("./raw-data.base");
 
-    testBase("thread");
+testBase("thread");

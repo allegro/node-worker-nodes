@@ -1,3 +1,3 @@
-const testBase = require('./auto-start.base');
+const testBase = require("./auto-start.base");
 
-    testBase("process");
+testBase("process");

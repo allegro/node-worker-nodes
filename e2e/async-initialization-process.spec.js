@@ -1,3 +1,3 @@
-const testBase = require('./async-initialization.base');
+const testBase = require("./async-initialization.base");
 
-    testBase("process");
+testBase("process");

@@ -1,3 +1,3 @@
-const testBase = require('./spawn-new-workers-on-stop.base');
+const testBase = require("./spawn-new-workers-on-stop.base");
 
-    testBase("process");
+testBase("process");

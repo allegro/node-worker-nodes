@@ -1,3 +1,3 @@
-const testBase = require('./main.base');
+const testBase = require("./main.base");
 
-    testBase("thread");
+testBase("thread");

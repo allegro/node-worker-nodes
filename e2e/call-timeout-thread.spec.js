@@ -1,3 +1,3 @@
-const testBase = require('./call-timeout.base');
+const testBase = require("./call-timeout.base");
 
-    testBase("thread");
+testBase("thread");

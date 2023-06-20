@@ -1,3 +1,3 @@
-const testBase = require('./failure-recovery.base');
+const testBase = require("./failure-recovery.base");
 
-    testBase("process");
+testBase("process");

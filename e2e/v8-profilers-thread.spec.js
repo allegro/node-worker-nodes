@@ -1,3 +1,3 @@
-const testBase = require('./v8-profilers.base');
+const testBase = require("./v8-profilers.base");
 
-    testBase("thread");
+testBase("thread");

@@ -1,3 +1,3 @@
-const testBase = require('./lazy-start.base');
+const testBase = require("./lazy-start.base");
 
-    testBase("process");
+testBase("process");

@@ -1,3 +1,3 @@
-const testBase = require('./processing-concurrency.base');
+const testBase = require("./processing-concurrency.base");
 
-    testBase("thread");
+testBase("thread");
