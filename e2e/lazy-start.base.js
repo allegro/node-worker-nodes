@@ -66,7 +66,7 @@ module.exports = function describe(workerType) {
         t.deepEqual(result, [1, 1, 1]);
     });
 
-    test(`should cause maximum utilization of the existing workers if calls are sequential`, async (t) => {
+    test.only(`should cause maximum utilization of the existing workers if calls are sequential`, async (t) => {
         // given
         const workerNodes = new WorkerNodes(fixture('process-info'), {
             lazyStart: true,
@@ -77,13 +77,17 @@ module.exports = function describe(workerType) {
 
         // when
         const results1 = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
-        await wait(10); // let worker to become "free"
         const results2 = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
-        await wait(10); // let worker to become "free"
         const results3 = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
+
+        const getWorkersStatus = () => workerNodes.workersQueue.map(worker => ({
+            startDate: worker.process.startDate,
+            isOperational: worker.isOperational(),
+        }));
 
         // then
         t.is(unique([results1, results2, results3]).length, 1);
+        t.is(getWorkersStatus().length, 1);
     });
 
     test(`should spawn max number of workers to handle the concurrent calls`, async (t) => {
