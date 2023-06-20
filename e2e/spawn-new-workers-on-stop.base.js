@@ -6,19 +6,20 @@ const { fixture, repeatCall, eventually } = require('./utils');
 module.exports = function describe(workerType) {
     test(`should spawn new workers when old workers exit even if no items in the queue`, async (t) => {
         // given
-        const getOperationalWorkersCount = () => workerNodes.workersQueue.filter((worker) => worker.isOperational()).length;
         const maxWorkers = 4;
         const minWorkers = 2;
+        
         const workerNodes = new WorkerNodes(fixture('process-info'), { maxWorkers, minWorkers, workerEndurance: 1, autoStart: true, workerType });
-
+        const getOperationalWorkersCount = () => workerNodes.workersQueue.filter((worker) => worker.isOperational()).length;
         await workerNodes.ready();
 
-        t.is(getOperationalWorkersCount(), minWorkers);
+        t.true(getOperationalWorkersCount() >= minWorkers); // because autoStart: true, maxWorkers would get started, but pool considered ready after minWorkers.
+        await eventually(() => getOperationalWorkersCount() === maxWorkers); // lets wait for all of the workers to start, so we'll capture all workers ids
         const workerIdsBeforeTaskExecution = new Set(workerNodes.workersQueue.map(worker => worker.id));
 
         // when
         await repeatCall(workerNodes.call.noop, maxWorkers);
-        
+
         // we expect the workers we used to be released
         const getOperationWorkersWithIdsCount = (ids) => workerNodes.workersQueue.filter((worker) => ids.has(worker.id)).length;
         await eventually(() => getOperationWorkersWithIdsCount(workerIdsBeforeTaskExecution) === 0)
