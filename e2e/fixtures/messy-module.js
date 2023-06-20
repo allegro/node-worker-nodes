@@ -1,7 +1,10 @@
+const { threadId } = require('worker_threads');
 /* eslint-disable */
 module.exports = {
 
     getPid: () => process.pid,
+
+    getThreadId: () => threadId,
 
     typeError: () => module.exports(),
 
