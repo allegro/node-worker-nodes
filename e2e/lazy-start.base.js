@@ -77,7 +77,9 @@ module.exports = function describe(workerType) {
 
         // when
         const results1 = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
+        await wait(10); // let worker to become "free"
         const results2 = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
+        await wait(10); // let worker to become "free"
         const results3 = await workerNodes.call[workerType === "thread" ? "getThreadId" : "getPid"]();
 
         // then
