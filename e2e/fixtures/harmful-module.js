@@ -18,6 +18,8 @@ module.exports = {
         });
     },
 
+    noop: () => {},
+
     setSomeJobFailsNumber: number => fs.writeFileSync(tmpFile, String(number)),
     someJob() {
         let failsLeft = fs.existsSync(tmpFile) ? parseInt(fs.readFileSync(tmpFile, 'utf8')) : 0;

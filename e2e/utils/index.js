@@ -27,8 +27,10 @@ module.exports.eventually = async (predicate, timeout = 5000) => {
     do {
         try {
             const result = await predicate();
+
             if (result) {
                 promiseDescriptor.resolve(result);
+                break;
             }
         } catch (ex) {
             console.warn(`eventually(): provided predicate throwed: ${ex.message}`);
