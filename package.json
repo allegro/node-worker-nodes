@@ -1,5 +1,5 @@
 {
-    "name": "@Galcarmi/worker-nodes",
+    "name": "worker-nodes",
     "description": "A library to run cpu-intensive tasks without blocking the event loop.",
     "keywords": [
         "workers",
@@ -43,6 +43,5 @@
     },
     "ava": {
         "workerThreads": false
-    },
-    "version": "0.1.0"
+    }
 }
