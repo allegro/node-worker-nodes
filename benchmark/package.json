@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "bluebird": "^3.7.2",
-    "easy-table": "^1.1.1",
+    "easy-table": "^1.2.0",
     "minimist": "^1.2.8",
     "text-table": "^0.2.0"
   },
