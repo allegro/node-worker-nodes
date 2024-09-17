@@ -13,12 +13,16 @@ interface Options {
   workerType?: "thread" | "process";
 }
 
+interface TakeSnapshotOptions {
+  restartWorker?: boolean;
+}
+
 interface WorkerNodesInstance {
   call: CallProperty;
   ready: () => Promise<WorkerNodesInstance>;
   terminate: () => Promise<WorkerNodesInstance>;
   profiler: (duration?: number) => void;
-  takeSnapshot: () => void;
+  takeSnapshot: (options?: TakeSnapshotOptions) => void;
   getUsedWorkers: () => Array<Worker>;
 }
 

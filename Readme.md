@@ -74,11 +74,26 @@ Run CPU Profiler and save result on main process directory
 
 <a name="WorkerNodes+takeSnapshot"></a>
 
-### workerNodes.takeSnapshot() ⇒ <code>void</code>
+### workerNodes.takeSnapshot() ⇒ <code>Promise</code>
 Take Heap Snapshot and save result on main process directory
+
+The operation will fail when there is not enough memory to create a snapshot.
 
 **Kind**: instance method of [<code>WorkerNodes</code>](#WorkerNodes)  
 <a name="WorkerNodes+getUsedWorkers"></a>
+
+| Param   | Type |
+|---------| --- |
+| options | <code>TakeSnapshotOptions</code> | 
+
+### options.restartWorker : <code>Boolean</code>
+
+Orders a worker that was used to create a snapshot,
+to be immediately restarted.
+It's recommended to use this option,
+because V8 might persist the snapshot in memory until exit.
+
+**Default**: <code>false</code>
 
 ### workerNodes.getUsedWorkers() ⇒ <code>Array.&lt;Worker&gt;</code>
 Return list with used workers in pool
